@@ -12,8 +12,8 @@
 #
 # [Remember: No empty lines between comments and class definition]
 class thumbor ( 
-) inherits ::thumbor::params {
-
+) {
+    require newrelic::params
     ## Modules
     include thumbor::config
     include thumbor::service
