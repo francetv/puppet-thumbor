@@ -12,8 +12,14 @@
 #
 # [Remember: No empty lines between comments and class definition]
 class thumbor ( 
+      $security_key='MY_SECURE_KEY',
+      $port='8888',
+      $ip='0.0.0.0',
+      $config = {},
+      $conffile = '/dev/null',
+      $install_method = 'pip'
 ) {
-    require thumbor::params
+    
     ## Modules
     include thumbor::config
     include thumbor::service
