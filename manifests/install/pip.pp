@@ -39,8 +39,8 @@ class thumbor::install::pip {
     provider => 'pip',
   }
 
-  if $::service_provider == 'systemd'{
-    thumbor::systemd{ $name: }
+  #if $::service_provider == 'systemd'{
+    thumbor::systemd{ thumbor: }
     exec { "Reload systemd  thumbor" :
       command => '/bin/systemctl daemon-reload',
       before => Exec["Enable Thumbor systemd"]
@@ -51,7 +51,7 @@ class thumbor::install::pip {
       require => thumbor::systemd["thumbor"],
       before  => Service["thumbor"],
     }
-  }
+ # }
 
 
 
