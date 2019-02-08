@@ -6,6 +6,8 @@ define thumbor::systemd {
     },
     'Service' => {
       'ExecStart'   => "/usr/local/bin/thumbor -c /etc/thumbor.conf -k /etc/thumbor.key",
+      'User' => 'thumbor',
+      'Group' => 'thumbor',
     },
     'Install' => {
       'WantedBy'   => 'multi-user.target',
