@@ -18,6 +18,9 @@ class thumbor::config {
     group  => 'root',
     mode   => '0644',
     content=> template('thumbor/default.erb'),
+
+
+
   }
   file {'/etc/thumbor.conf':
     ensure => present,
