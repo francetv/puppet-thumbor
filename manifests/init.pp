@@ -13,7 +13,7 @@
 # [Remember: No empty lines between comments and class definition]
 class thumbor ( 
 ) {
-    require newrelic::params
+    require thumbor::params
     ## Modules
     include thumbor::config
     include thumbor::service
