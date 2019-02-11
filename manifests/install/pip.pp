@@ -15,7 +15,7 @@ class thumbor::install::pip {
   }
   -> package { 'thumbor':
     provider => 'pip',
-    ensure => '5.2.1'
+    ensure => '6.7.0'
   }
   -> package { 'tc_redis':
     provider => 'pip',
