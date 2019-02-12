@@ -28,9 +28,6 @@ class thumbor::install::pip {
     provider => 'pip',
   }
   
-  
-  https://github.com/timich/thumbor_mongodb/archive/master.zip
-  
   -> package { 'opencv-engine':
     provider => 'pip',
   }
