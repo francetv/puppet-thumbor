@@ -20,6 +20,17 @@ class thumbor::install::pip {
   -> package { 'tc_redis':
     provider => 'pip',
   }
+  -> package { 'tc_mongodb':
+    provider => 'pip',
+    ensure => '5.1.0'
+  }
+  -> package { 'https://github.com/timich/thumbor_mongodb/archive/master.zip':
+    provider => 'pip',
+  }
+  
+  
+  https://github.com/timich/thumbor_mongodb/archive/master.zip
+  
   -> package { 'opencv-engine':
     provider => 'pip',
   }
