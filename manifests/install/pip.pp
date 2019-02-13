@@ -17,6 +17,9 @@ class thumbor::install::pip {
     provider => 'pip',
     ensure => '6.7.0'
   }
+  -> package { 'remotecv':
+    provider => 'pip',
+  }
   -> package { 'tc_redis':
     provider => 'pip',
   }
