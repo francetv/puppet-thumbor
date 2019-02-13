@@ -8,7 +8,9 @@ class thumbor::install::pip {
     'python-numpy',
     'python-opencv',
     'libmemcached-dev',
-    'libcurl4-openssl-dev'
+    'libcurl4-openssl-dev',
+    'libjpeg-turbo-progs',
+    'pngquant'    
   ]: }
   -> package { 'colour':
     provider => 'pip'
@@ -17,6 +19,9 @@ class thumbor::install::pip {
     provider => 'pip',
     ensure => '6.7.0'
   }
+  -> package { 'thumbor-plugins':
+    provider => 'pip'
+  }  
   -> package { 'remotecv':
     provider => 'pip',
   }
