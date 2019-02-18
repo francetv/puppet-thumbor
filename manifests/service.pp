@@ -13,7 +13,7 @@
 # [Remember: No empty lines between comments and class definition]
 case $thumbor_service_provider {
   'systemd': {
-    file { '/etc/systemd/system/thumbor-service.cfg':
+    file { "/etc/systemd/system/thumbor-service-${thumbor::port}.cfg":
       #ensure  => $newrelic_php_service_ensure,
       content => template('thumbor/thumbor.service.erb'),
     }~>
@@ -26,13 +26,13 @@ case $thumbor_service_provider {
   default: {}
 }
 class thumbor::service {
-  service {"thumbor":
-    require => File['/etc/thumbor.conf',
+  service {"thumbor-${thumbor::port}":
+    require => File["/etc/thumbor-${thumbor::port}.conf",
     '/etc/thumbor.key',
     '/etc/default/thumbor'],
     ensure  => running,
     enable  => true,
-    subscribe => File['/etc/thumbor.conf',
+    subscribe => File["/etc/thumbor-${thumbor::port}.conf",
     '/etc/thumbor.key',
     '/etc/default/thumbor'],
   }
