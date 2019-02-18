@@ -13,7 +13,7 @@
 # [Remember: No empty lines between comments and class definition]
 class thumbor (
 $security_key='MY_SECURE_KEY',
-$ports=[8888, 8889,8890],
+$ports=['8888', '8889', '8890'],
 $ip='0.0.0.0',
 $config = {},
 $conffile = '/dev/null',
