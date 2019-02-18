@@ -48,7 +48,7 @@ class thumbor::install::pip {
     command => "/bin/systemctl enable thumbor_${thumbor::port}",
     onlyif  => "/bin/systemctl is-enabled thumbor_${thumbor::port} | /bin/grep 'disabled'",
     #require => Class['thumbor::systemd'],
-    before  => Service["thumbor"],
+    before  => Service["thumbor-${thumbor::port}"],
   }
   # }
   group { 'thumbor':
