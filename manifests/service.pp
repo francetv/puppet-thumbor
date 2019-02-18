@@ -27,12 +27,12 @@ case $thumbor_service_provider {
 }
 class thumbor::service {
   service {"thumbor-${thumbor::port}":
-    require => File["/etc/thumbor-${thumbor::port}.conf",
+    require => File["/etc/thumbor_${thumbor::port}.conf",
     '/etc/thumbor.key',
     '/etc/default/thumbor'],
     ensure  => running,
     enable  => true,
-    subscribe => File["/etc/thumbor-${thumbor::port}.conf",
+    subscribe => File["/etc/thumbor_${thumbor::port}.conf",
     '/etc/thumbor.key',
     '/etc/default/thumbor'],
   }
