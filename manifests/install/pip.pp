@@ -44,11 +44,13 @@ class thumbor::install::pip {
     command => '/bin/systemctl daemon-reload',
     before => Exec["Enable Thumbor systemd"]
   }
-  exec { "Enable Thumbor systemd" :
-    command => "/bin/systemctl enable thumbor-${thumbor::port}",
-    onlyif  => "/bin/systemctl is-enabled thumbor-${thumbor::port} | /bin/grep 'disabled'",
+  exec { "Enable Thumbor systemd" :    
+    $thumbor::ports.each |String $inst| {
+    command => "/bin/systemctl enable thumbor-${inst}",
+    onlyif  => "/bin/systemctl is-enabled thumbor-${inst} | /bin/grep 'disabled'",
     #require => Class['thumbor::systemd'],
-    before  => Service["thumbor-${thumbor::port}"],
+    before  => Service["thumbor-${inst}"],    
+    }
   }
   # }
   group { 'thumbor':
