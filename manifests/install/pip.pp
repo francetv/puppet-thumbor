@@ -45,8 +45,8 @@ class thumbor::install::pip {
     before => Exec["Enable Thumbor systemd"]
   }
   exec { "Enable Thumbor systemd" :
-    command => "/bin/systemctl enable thumbor",
-    onlyif  => "/bin/systemctl is-enabled thumbor | /bin/grep 'disabled'",
+    command => "/bin/systemctl enable thumbor-${thumbor::port}",
+    onlyif  => "/bin/systemctl is-enabled thumbor-${thumbor::port} | /bin/grep 'disabled'",
     #require => Class['thumbor::systemd'],
     before  => Service["thumbor"],
   }
