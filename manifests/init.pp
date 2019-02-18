@@ -14,6 +14,7 @@
 class thumbor (
 $security_key='MY_SECURE_KEY',
 $port='8888',
+$instances='3',
 $ip='0.0.0.0',
 $config = {},
 $conffile = '/dev/null',
