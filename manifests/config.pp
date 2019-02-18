@@ -19,7 +19,7 @@ class thumbor::config {
     mode   => '0644',
     content=> template('thumbor/default.erb'),
   }
-  file {'etc/thumbor_8888.conf':
+  file {'etc/thumbor_${thumbor::port}.conf':
     ensure => present,
     owner  =>'root',
     group  => 'root',
