@@ -23,18 +23,16 @@ $install_method = 'pip'
   include thumbor::config
   #include thumbor::service
   ## Ordering
-  #Class['thumbor::config']
-  #~> Class['thumbor::service']
+  Class['thumbor::config']
+  ~> Class['thumbor::systemd']
   if $install_method == 'apt' {
     include thumbor::repo
     include thumbor::install::apt
     Class['thumbor::repo'] -> Class['thumbor::install::apt'] -> Class['thumbor::config']
   } elsif $install_method == 'pip' {
     include thumbor::install::pip
-    Class['thumbor::install::pip'] -> Class['thumbor::config']-> Class['thumbor::systemd']
+    Class['thumbor::install::pip'] -> Class['thumbor::config'] #-> Class['thumbor::systemd']
   } else {
     fail("install_method must be 'apt' or 'pip'")
   }
-
-
 }
