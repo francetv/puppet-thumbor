@@ -21,10 +21,10 @@ $install_method = 'pip'
 ) {
   ## Modules
   include thumbor::config
-  #include thumbor::service
+  include thumbor::systemd
   ## Ordering
-  Class['thumbor::config']
-  ~> Class['thumbor::systemd']
+  #Class['thumbor::config']
+  #~> Class['thumbor::systemd']
   if $install_method == 'apt' {
     include thumbor::repo
     include thumbor::install::apt
