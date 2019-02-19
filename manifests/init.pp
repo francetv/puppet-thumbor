@@ -18,7 +18,7 @@ $ip='0.0.0.0',
 $config = {},
 $conffile = '/dev/null',
 $install_method = 'pip'
-) inherits thumborftv::params {
+) {
   ## Modules
   include thumbor::config
   include thumbor::service
