@@ -12,8 +12,8 @@
 #
 # [Remember: No empty lines between comments and class definition]
 class thumbor (
-$security_key='MY_SECURE_KEY',
-$ports=['8888','8889','8890'],
+$security_key='MY_SECURE_KEY_207',
+$ports=['8888'],
 $ip='0.0.0.0',
 $config = {},
 $conffile = '/dev/null',
@@ -31,7 +31,7 @@ $install_method = 'pip'
     Class['thumbor::repo'] -> Class['thumbor::install::apt'] -> Class['thumbor::config']
   } elsif $install_method == 'pip' {
     include thumbor::install::pip
-    Class['thumbor::install::pip'] -> Class['thumbor::config'] #-> Class['thumbor::systemd']
+    Class['thumbor::install::pip'] -> Class['thumbor::config']
   } else {
     fail("install_method must be 'apt' or 'pip'")
   }
