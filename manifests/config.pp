@@ -34,9 +34,9 @@ class thumbor::config {
     content=> $thumbor::security_key,
   }
   if $::service_provider == 'systemd'{
-    $thumbor::ports.each |$inst| {
-      file { "/etc/systemd/system/thumbor-{$inst}-service.cfg":
-      content => template('thumbor/thumbor.service.erb')
+    $thumbor::ports.each |inst| {
+      file { "/etc/systemd/system/thumbor-${inst}-service.cfg":
+        content => template('thumbor/thumbor.service.erb')
       }
     }
   }
