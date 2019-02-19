@@ -13,7 +13,8 @@ class thumbor::systemd {
         #before  => Service["thumbor"],
       }
     }
-    else {
-      fail("require systemd")
-    }
   }
+  else {
+    fail("require systemd")
+  }
+}
