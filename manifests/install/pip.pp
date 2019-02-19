@@ -45,7 +45,7 @@ class thumbor::install::pip {
     before => Exec["Enable Thumbor systemd"]
   }
   $thumbor::ports.each |$inst| {
-  exec { "Enable Thumbor systemd" :    
+  exec { "Enable Thumbor systemd ${inst}" :    
     #$thumbor::ports.each |String $inst| {
     command => "/bin/systemctl enable thumbor-${inst}",
     onlyif  => "/bin/systemctl is-enabled thumbor-${inst} | /bin/grep 'disabled'",
