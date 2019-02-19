@@ -1,18 +1,19 @@
-define thumbor::systemd {
-  $systemd_setting = {
-    'Unit' => {
-      'Description'   => 'thumbor daemon',
-      'After'         => 'network.target',
-    },
-    'Service' => {
-      'ExecStart'   => "/usr/local/bin/thumbor -c /etc/thumbor.conf -k /etc/thumbor.key -p ${inst}",
-      'User' => 'thumbor',
-      'Group' => 'thumbor',
-    },
-    'Install' => {
-      'WantedBy'   => 'multi-user.target',
+class thumbor::systemd {
+  if $::service_provider == 'systemd'{
+    exec { "Reload systemd  thumbor" :
+      command => '/bin/systemctl daemon-reload',
+      before => Exec["Enable Thumbor systemd"]
+    }
+    exec { "Enable Thumbor systemd" :
+      $thumbor::ports.each |$inst| {
+        command => "/bin/systemctl enable thumbor-${inst]",
+        onlyif  => "/bin/systemctl is-enabled thumbor-${inst} | /bin/grep 'disabled'",
+        #require => Class['thumbor::systemd'],
+        #before  => Service["thumbor"],
+      }
     }
   }
-  $defaults = { 'path' => "/lib/systemd/system/thumbor_${inst}.service" }
-  create_ini_settings($systemd_setting, $defaults)
+  else {
+    fail("require systemd")
+  }
 }
