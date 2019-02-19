@@ -44,8 +44,9 @@ class thumbor::install::pip {
     command => '/bin/systemctl daemon-reload',
     before => Exec["Enable Thumbor systemd"]
   }
+  $thumbor::ports.each |String $inst| {
   exec { "Enable Thumbor systemd" :    
-    $thumbor::ports.each |String $inst| {
+    #$thumbor::ports.each |String $inst| {
     command => "/bin/systemctl enable thumbor-${inst}",
     onlyif  => "/bin/systemctl is-enabled thumbor-${inst} | /bin/grep 'disabled'",
     #require => Class['thumbor::systemd'],
