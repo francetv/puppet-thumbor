@@ -5,7 +5,7 @@ define thumbor::systemd {
       'After'         => 'network.target',
     },
     'Service' => {
-      'ExecStart'   => "/usr/local/bin/thumbor -c /etc/thumbor.conf -k /etc/thumbor.key",
+      'ExecStart'   => "/usr/local/bin/thumbor -c /etc/thumbor.conf -k /etc/thumbor.key -p ${inst}",
       'User' => 'thumbor',
       'Group' => 'thumbor',
     },
@@ -13,6 +13,6 @@ define thumbor::systemd {
       'WantedBy'   => 'multi-user.target',
     }
   }
-  $defaults = { 'path' => "/lib/systemd/system/thumbor.service" }
+  $defaults = { 'path' => "/lib/systemd/system/thumbor_${inst}.service" }
   create_ini_settings($systemd_setting, $defaults)
 }
