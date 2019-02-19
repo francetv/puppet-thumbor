@@ -7,12 +7,10 @@ class thumbor::systemd {
     }
     $thumbor::ports.each |$inst| {
       exec { "Enable Thumbor systemd ${inst}" :
-        $thumbor::ports.each |$inst| {
-          command => "/bin/systemctl enable thumbor-${inst}",
-          onlyif  => "/bin/systemctl is-enabled thumbor-${inst} | /bin/grep 'disabled'",
-          #require => Class['thumbor::systemd'],
-          #before  => Service["thumbor"],
-        }
+        command => "/bin/systemctl enable thumbor-${inst}",
+        onlyif  => "/bin/systemctl is-enabled thumbor-${inst} | /bin/grep 'disabled'",
+        #require => Class['thumbor::systemd'],
+        #before  => Service["thumbor"],
       }
     }
     else {
