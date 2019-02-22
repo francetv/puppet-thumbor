@@ -3,6 +3,7 @@ class thumbor::install::pip {
     'python-statsd',
     'python-crypto',
     'libjpeg-dev',
+    'libopencv-dev',
     'libpng-dev',
     'libtiff5-dev',
     'python-numpy',
