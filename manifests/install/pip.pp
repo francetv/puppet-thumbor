@@ -32,7 +32,7 @@ class thumbor::install::pip {
   -> package { 'https://github.com/francetv/mongodb/archive/master.zip':
     provider => 'pip'
   }
-  -> package { 'https://github.com/francetv/thumbor_mongodb/archive/master.zip':
+  -> package { 'https://github.com/francetv/thumbor_mongodb_loader/archive/master.zip':
     provider => 'pip'
   }
   -> package { 'opencv-engine':
