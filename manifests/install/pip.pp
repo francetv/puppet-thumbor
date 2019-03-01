@@ -29,7 +29,7 @@ class thumbor::install::pip {
   -> package { 'tc_redis':
     provider => 'pip',
   }
-  -> package { 'https://github.com/francetv/mongodb/archive/master.zip':
+  -> package { 'https://github.com/francetv/thumbor_mongodb_storage/archive/master.zip':
     provider => 'pip'
   }
   -> package { 'https://github.com/francetv/thumbor_mongodb_loader/archive/master.zip':
