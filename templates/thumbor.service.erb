@@ -9,6 +9,11 @@ ExecStart=/usr/local/bin/thumbor -c /etc/thumbor.conf -k /etc/thumbor.key -p <%=
 User=thumbor
 Group=thumbor
 
+StandardOutput=file:<%= path_log %>/thumbor.log
+StandardError=file:<%= path_log %>r/thumbor.log
+ReadWriteDirectories=-<%= path_log %>
+SysLogIdentifier=thumbor
+
 [Install]
 WantedBy=multi-user.target
 

@@ -26,6 +26,18 @@ class thumbor::config {
     mode   => '0644',
     content=> template($thumbor::conffile,"thumbor/thumbor.conf.erb")
   }
+  file { $path_log :
+      ensure          => directory,
+      owner           => 'root',
+      group           => 'adm',
+  }
+  file {"/etc/rsyslog.d/20_thumbor.conf":
+    ensure => present,
+    owner  =>'root',
+    group  => 'root',
+    mode   => '0644',
+    content=> template($thumbor::conffile,"thumbor/thumbor.rsyslog.erb")
+  }
   file {'/etc/thumbor.key':
     ensure => present,
     owner  => 'thumbor',
