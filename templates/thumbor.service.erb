@@ -9,9 +9,9 @@ ExecStart=/usr/local/bin/thumbor -c /etc/thumbor.conf -k /etc/thumbor.key -p <%=
 User=thumbor
 Group=thumbor
 
-StandardOutput=file:<%= thumbor::path_log %>/thumbor.log
-StandardError=file:<%= thumbor::path_log %>r/thumbor.log
-ReadWriteDirectories=-<%= thumbor::path_log %>
+StandardOutput=file:<%= plog %>/thumbor.log
+StandardError=file:<%= plog %>/thumbor.log
+ReadWriteDirectories=-<%= plog %>
 SysLogIdentifier=thumbor
 
 [Install]
