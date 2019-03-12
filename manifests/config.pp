@@ -26,7 +26,7 @@ class thumbor::config {
     mode   => '0644',
     content=> template($thumbor::conffile,"thumbor/thumbor.conf.erb")
   }
-  file { $path_log :
+  file { $thumbor::path_log:
     ensure          => directory,
     owner           => 'root',
     group           => 'adm',
