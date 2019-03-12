@@ -12,6 +12,7 @@
 #
 # [Remember: No empty lines between comments and class definition]
 class thumbor::config {
+  $plog = $thumbor::path_log
   file {'/etc/default/thumbor':
     ensure => present,
     owner  => 'root',
