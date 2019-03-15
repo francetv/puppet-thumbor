@@ -40,7 +40,7 @@ class thumbor::config {
     owner           => 'root',
     group           => 'adm',
   }
-  file {"/etc/rsyslog.d/20_thumbor.conf":
+  file {"/etc/rsyslog.d/40_thumbor.conf":
     ensure => present,
     owner  =>'root',
     group  => 'root',
