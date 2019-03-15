@@ -22,11 +22,12 @@ class thumbor::config {
   }
   $thumbor::ports.each |$inst| {
     $statp = Integer($inst) +100
-    file {"/etc/thumbor-${inst}.conf":
+    file {"/etc/thumbor/thumbor-${inst}.conf":
       ensure => present,
       owner  =>'root',
       group  => 'root',
       mode   => '0644',
+      require => File['/etc/thumbor'],
       content=> template($thumbor::conffile,"thumbor/thumbor.conf.erb")
     }
   }
