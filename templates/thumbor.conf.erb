@@ -1,9 +1,9 @@
 <% config = scope.lookupvar('thumbor::config')
-#using key array ensure keeping key order the same
-ks = config.keys.sort
-ks.each do |key| 
-#puppet transcode numeric as string so have to detect it (int and float)
-if config[key].is_a? String and config[key] =~ /^\d+$/ then 
+  #using key array ensure keeping key order the same
+  ks = config.keys.sort
+  ks.each do |key| 
+  #puppet transcode numeric as string so have to detect it (int and float)
+  if config[key].is_a? String and config[key] =~ /^\d+$/ then -%>
 <%= key %> = <%= config[key].inspect %>
 <% elsif config[key].is_a? String and config[key] =~ /^\d+\.\d*$/ then  -%>
 <%= key %> = <%= config[key].to_f %>
