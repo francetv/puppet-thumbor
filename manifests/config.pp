@@ -20,14 +20,22 @@ class thumbor::config {
     mode   => '0644',
     content=> template('thumbor/default.erb'),
   }
-  file {"/etc/thumbor.conf":
-    ensure => present,
-    owner  =>'root',
-    group  => 'root',
-    mode   => '0644',
-    content=> template($thumbor::conffile,"thumbor/thumbor.conf.erb")
+  $thumbor::ports.each |$inst| {
+    $statp = $inst.to_i +100
+    file {"/etc/thumbor-${inst}.conf":
+      ensure => present,
+      owner  =>'root',
+      group  => 'root',
+      mode   => '0644',
+      content=> template($thumbor::conffile,"thumbor/thumbor.conf.erb")
+    }
   }
   file { $thumbor::path_log:
+    ensure          => directory,
+    owner           => 'root',
+    group           => 'adm',
+  }
+  file { "/etc/thumbor:
     ensure          => directory,
     owner           => 'root',
     group           => 'adm',
