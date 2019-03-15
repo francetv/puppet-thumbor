@@ -35,7 +35,7 @@ class thumbor::config {
     owner           => 'root',
     group           => 'adm',
   }
-  file { "/etc/thumbor:
+  file { '/etc/thumbor':
     ensure          => directory,
     owner           => 'root',
     group           => 'adm',
@@ -45,7 +45,7 @@ class thumbor::config {
     owner  =>'root',
     group  => 'root',
     mode   => '0644',
-    content=> template($thumbor::conffile,"thumbor/thumbor.rsyslog.erb")
+    content=> template($thumbor::conffile,'thumbor/thumbor.rsyslog.erb'),
   }
   file {'/etc/thumbor.key':
     ensure => present,
