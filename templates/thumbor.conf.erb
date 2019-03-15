@@ -8,7 +8,7 @@
 <% elsif config[key].is_a? String and config[key] =~ /^\d+\.\d*$/ then  -%>
 <%= key %> = <%= config[key].to_f %>
 <% else -%>
-if key == 'METRICS' and config[key]  == 'tc_prometheus.metrics.prometheus_metrics' -%>
+<% if key == 'METRICS' and config[key]  == 'tc_prometheus.metrics.prometheus_metrics' -%>
 PROMETHEUS_SCRAPE_PORT = <%= @statp %>
 <% end -%>
 <%= key %> = <%= config[key].inspect %>
