@@ -4,16 +4,14 @@ ks = config.keys.sort
 ks.each do |key| 
 #puppet transcode numeric as string so have to detect it (int and float)
 if config[key].is_a? String and config[key] =~ /^\d+$/ then 
-if key == 'METRICS' and config[key]  == 'tc_prometheus.metrics.prometheus_metrics' -%>
-<%= key %> = <%= config[key].to_i %>
-PROMETHEUS_SCRAPE_PORT = <%= @statp %>
 <%= key %> = <%= config[key].inspect %>
-<% else -%>
-<%= key %> = <%= config[key].inspect %>
-<% end -%>
 <% elsif config[key].is_a? String and config[key] =~ /^\d+\.\d*$/ then  -%>
 <%= key %> = <%= config[key].to_f %>
 <% else -%>
+if key == 'METRICS' and config[key]  == 'tc_prometheus.metrics.prometheus_metrics' -%>
+<%= key %> = <%= config[key].to_i %>
+PROMETHEUS_SCRAPE_PORT = <%= @statp %>
+<% end -%>
 <%= key %> = <%= config[key].inspect %>
 <% end
 end -%>
