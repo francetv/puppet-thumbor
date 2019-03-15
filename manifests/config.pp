@@ -21,7 +21,7 @@ class thumbor::config {
     content=> template('thumbor/default.erb'),
   }
   $thumbor::ports.each |$inst| {
-    $statp = $inst.to_i +100
+    $statp = Integer($inst) +100
     file {"/etc/thumbor-${inst}.conf":
       ensure => present,
       owner  =>'root',
