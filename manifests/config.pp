@@ -48,11 +48,12 @@ class thumbor::config {
     mode   => '0644',
     content=> template($thumbor::conffile,'thumbor/thumbor.rsyslog.erb'),
   }
-  file {'/etc/thumbor.key':
+  file {'/etc/thumbor/thumbor.key':
     ensure => present,
     owner  => 'thumbor',
     group  => 'thumbor',
     mode   => '0600',
+    require => File['/etc/thumbor'],
     content=> $thumbor::security_key,
   }
   if $::service_provider == 'systemd'{
