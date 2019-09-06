@@ -26,9 +26,6 @@ class thumbor::install::pip {
   -> package { 'remotecv':
     provider => 'pip',
   }
-  -> package { 'tc_redis':
-    provider => 'pip',
-  }
   -> package { 'tc_prometheus':
     provider => 'pip',
   }
@@ -38,6 +35,12 @@ class thumbor::install::pip {
   -> package { 'https://github.com/francetv/thumbor_mongodb_loader/archive/master.zip':
     provider => 'pip'
   }
+  -> package { 'https://github.com/francetv/thumbor_file_loader_pic.git':
+    provider => 'pip'
+  }
+  -> package { 'https://github.com/francetv/thumbor_file_loader_pic_fallback.git':
+    provider => 'pip'
+  } 
   -> package { 'opencv-engine':
     provider => 'pip',
   }
