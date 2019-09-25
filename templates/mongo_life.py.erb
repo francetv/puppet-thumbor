@@ -210,4 +210,5 @@ if mongo_cache_mod == 'thumbor_mongodb_storage.result_storages.mongo_result_stor
   print resp2.get('moteur')
   print ("\033[32m*************************************************************\033[0m")
   print "\033[32mINFO - Fin de la verification index de performance\033[0m"
-
+else:
+  print "\033[31mCRIT - La systeme n'utilise pas le module MongoFTV pour le cache, pas d'actions\033[0m"
