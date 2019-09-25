@@ -32,13 +32,13 @@ class thumbor::install::pip {
   -> package { 'configparser':
     provider => 'pip',
   }
-  -> package { 'https://github.com/francetv/thumbor_mongodb_storage/archive/master.zip':
+  -> package { 'https://github.com/francetv/thumbor_mongodb_storage/archive/v5.3.0.tar.gz':
     provider => 'pip'
   }
-  -> package { 'https://github.com/francetv/thumbor_mongodb_loader/archive/master.zip':
+  -> package { 'https://github.com/francetv/thumbor_mongodb_loader/archive/v1.2.3.tar.gz':
     provider => 'pip'
   }
-  -> package { 'https://github.com/francetv/thumbor_file_loader_pic/archive/master.zip':
+  -> package { 'https://github.com/francetv/thumbor_file_loader_pic/archive/v1.0.1.tar.gz':
     provider => 'pip'
   }
   -> package { 'opencv-engine':
