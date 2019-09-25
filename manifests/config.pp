@@ -41,6 +41,18 @@ class thumbor::config {
     owner           => 'root',
     group           => 'adm',
   }
+  file { '/opt/thumbor':
+    ensure          => directory,
+    owner           => 'root',
+    group           => 'adm',
+  }
+  file { '/opt/thumbor/mongo_life.py':
+    ensure => present,
+    owner  =>'root',
+    group  => 'root',
+    mode   => '0644',
+    content=> template($thumbor::conffile,'thumbor/mongo_life.py.erb'),
+  }
   file { '/etc/rsyslog.d/40_thumbor.conf':
     ensure => present,
     owner  =>'root',

@@ -1,0 +1,213 @@
+#!/usr/bin/python2.7
+from pymongo import *
+from datetime import datetime
+from datetime import timedelta
+import gridfs
+import configparser
+import sys
+
+############## Recuperation du fichier de configuration et parse
+with open('/etc/thumbor/thumbor-8888.conf') as f:
+    file_content = u'[main]\n' + f.read()
+
+config_parser = configparser.RawConfigParser()
+config_parser.read_string(file_content)
+# conf TTL
+ttl_storage = config_parser.get('main','STORAGE_EXPIRATION_SECONDS').replace("\"", "")
+ttl_cache =  config_parser.get('main','RESULT_STORAGE_EXPIRATION_SECONDS').replace("\"", "")
+# conf storage
+mongo_str_server = config_parser.get('main','MONGO_STORAGE_SERVER_HOST').replace("\"", "")
+mongo_str_user = config_parser.get('main','MONGO_STORAGE_SERVER_USER').replace("\"", "")
+mongo_str_pass = config_parser.get('main','MONGO_STORAGE_SERVER_PASSWORD').replace("\"", "")
+mongo_str_authdb = config_parser.get('main','MONGO_STORAGE_SERVER_AUTH').replace("\"", "")
+mongo_str_db = config_parser.get('main','MONGO_STORAGE_SERVER_DB').replace("\"", "")
+mongo_str_col = config_parser.get('main','MONGO_STORAGE_SERVER_COLLECTION').replace("\"", "")
+mongo_str_mod = config_parser.get('main','STORAGE').replace("\"", "")
+# conf cache
+mongo_cache_server = config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_HOST').replace("\"", "")
+mongo_cache_user = config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_USER').replace("\"", "")
+mongo_cache_pass = config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_PASSWORD').replace("\"", "")
+mongo_cache_authdb = config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_AUTH').replace("\"", "")
+mongo_cache_db = config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_DB').replace("\"", "")
+mongo_cache_col = config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_COLLECTION').replace("\"", "")
+mongo_cache_mod = config_parser.get('main','RESULT_STORAGE').replace("\"", "")
+
+
+####################### STORAGE ##########################################################
+uri = "mongodb://" + mongo_str_user + ":" + mongo_str_pass + "@" + mongo_str_server + "/?authSource=" + mongo_str_authdb #+ "&replicaSet=education-preprod"
+client = MongoClient(uri)
+
+#database
+db = client[mongo_str_db]
+col = db[mongo_str_col]
+
+#return db
+resp = db.images.index_information()
+#print ("index:", resp)
+goodst=0
+gooph=0
+tgridfs=1
+
+print "\033[36m#####################################################################################################\033[0m"
+print "\033[36m#                                                                                                   #\033[0m"
+print "\033[36m#                            Verification de l'instance Thumbor Mongo.....                          #\033[0m"
+print "\033[36m#                                         V 1.0                                                     #\033[0m"
+print "\033[36m#                                                                                                   #\033[0m"
+print "\033[36m#####################################################################################################\033[0m"
+print " "
+
+if mongo_str_mod == 'thumbor_mongodb_storage.storages.mongo_storage':
+  uri = "mongodb://" + mongo_str_user + ":" + mongo_str_pass + "@" + mongo_str_server + "/?authSource=" + mongo_str_authdb #+ "&replicaSet=education-preprod"
+  client = MongoClient(uri)
+
+  #database
+  db = client[mongo_str_db]
+  col = db[mongo_str_col]
+
+  #return db
+  resp = db.images.index_information()
+  imgc=0
+  imgfs=0
+  goodst=0
+  gooph=0  
+  if tgridfs == 1:
+    print "\033[32mINFO - Supression des images et chunks associes \033[0m"
+    today = datetime.today()
+    ttl_removefs = int(ttl_storage,10)/86400
+
+    # Recherche dans la collection image les images vieilles
+    resultimg= col.find({"created_at": {"$lt": today - timedelta(days=ttl_removefs)}})
+    collection = db.fs.files
+    # Recherche les fragments gridFS correspondants
+    for img in resultimg:
+      print img['file_id']
+      col.delete_one({"_id": img['_id']})
+      result = collection.find({"_id": img['file_id']})
+      imgc = imgc + 1
+      for doc in result:
+        files_id = doc['_id']
+        print  doc['_id']
+        fs = gridfs.GridFS(db)
+        fs.delete(files_id)
+        imgfs = imgfs + 1
+    print "\033[32mINFO - Fin de purge du stocage -" + str(imgc) + " images / -" + str(imgfs) + " chuncks\033[0m"
+  else:
+    print "\033[35m############################## Verification de l'index de stockage.....##############################\033[0m"
+    if  resp.get('purge'):
+      print "\033[32mINFO - Index present\033[0m"
+      eee = resp.get('purge')
+      #hihi = map(int, aaa.distinct('expireAfterSeconds'))
+      aaa = map(int ,eee['expireAfterSeconds']);
+      tta= int(ttl_storage,10)
+      if aaa[0] >> tta:
+        print "\033[34mWARN - Le TTL en base (",aaa[0],") est superieur a la configuration (",ttl_storage,"\033[0m)"
+        goodst = 1
+        gooph = 1
+      elif aaa[0] == tta:
+        print "\033[32mINFO - Le TTL en base (",aaa[0],") est identique a la configuration (",ttl_storage,")\033[0m"
+      else:
+        print "\033[34mWARN - Le TTL en base (",aaa[0],") est inferieur a la configuration (",ttl_storage,")\033[0m"
+        goodst = 1
+        gooph = 1
+    else:
+      print "\033[31mCRIT - L'indes de purge n'est pas present dans la collection\033[0m"
+      goodst = 1
+
+    if goodst == 1:
+      if gooph == 1:
+        print "\033[32mINFO - Supression de l'index de purge\033[0m"
+        col.drop_index('purge')
+      print "\033[32mINFO - Creation de l'index de purge\033[0m"
+      col.create_index([('created_at', ASCENDING)], name='purge', expireAfterSeconds=[ttl_storage])
+      print ("\033[32mINFO - index: \033[0m")
+    else:
+      print ("\033[32mINFO - index: \033[0m")
+    print ("\033[32m*************************************************************\033[0m")
+    resp = db.images.index_information()
+    print resp.get('purge')
+    print ("\033[32m*************************************************************\033[0m")
+    print "\033[32mINFO - Fin de la verification index stockage\033[0m"
+
+  print "\033[35m############################## Verification de l'index de recherche.....##############################\033[0m"
+  if  resp.get('moteur'):
+    print "\033[32mINFO - Index de performance present \033[0m"
+  else:
+    print "\033[31mCRIT - L'index de performance n'est pas present dans la collection\033[0m"
+    print "\033[32mINFO - Creation de l'index de performance\033[0m"
+    col.create_index([('path', ASCENDING)], name='moteur')
+  print ("\033[32mINFO - index: \033[0m")
+  print ("\033[32m*************************************************************\033[0m")
+  resp = db.images.index_information()
+  print resp.get('moteur')
+  print ("\033[32m*************************************************************\033[0m")
+  print "\033[32mINFO - Fin de la verification index de performance\033[0m"
+else:
+  print "\033[31mCRIT - La systeme n'utilise pas le module MongoFTV pour le stockage, pas d'actions\033[0m"
+
+
+if mongo_cache_mod == 'thumbor_mongodb_storage.result_storages.mongo_result_storage':
+
+
+  uri2 = "mongodb://" + mongo_cache_user + ":" + mongo_cache_pass + "@" + mongo_cache_server + "/?authSource=" + mongo_cache_authdb #+ "&replicaSet=education-preprod"
+  client2 = MongoClient(uri2)
+
+  #database
+  db2 = client2[mongo_cache_db]
+  col2 = db2[mongo_cache_col]
+
+  #return db
+  resp2 = db2.images_cache.index_information()
+  #print ("index:", resp)
+  goodst2=0
+  gooph2=0
+
+  print "\033[35m############################### Verification de l'index de cache..... ###############################\033[0m"
+  if  resp2.get('purge'):
+    print "\033[32mINFO - Index present\033[0m"
+    eee2 = resp2.get('purge')
+    #hihi = map(int, aaa.distinct('expireAfterSeconds'))
+    aaa2 = map(int ,eee2['expireAfterSeconds']);
+    tta2= int(ttl_cache,10)
+    if aaa2[0] >> tta2:
+        print "\033[34mWARN - Le TTL en base (",aaa2[0],") est superieur a la configuration (",ttl_cache,"\033[0m)"
+        goodst2 = 1
+        gooph2 = 1
+    elif aaa2[0] == tta2:
+        print "\033[32mINFO - Le TTL en base (",aaa2[0],") est identique a la configuration (",ttl_cache,")\033[0m"
+    else:
+        print "\033[34mWARN - Le TTL en base (",aaa2[0],") est inferieur a la configuration (",ttl_cache,")\033[0m"
+        goodst2 = 1
+        gooph2 = 1
+  else:
+    print "\033[31mCRIT - L'index de purge n'est pas present dans la collection\033[0m"
+    goodst2 = 1
+
+  if goodst2 == 1:
+    if gooph2 == 1:
+      print "\033[32mINFO - Supression de l'index de purge\033[0m"
+      col2.drop_index('purge')
+    print "\033[32mINFO - Creation de l'index de purge\033[0m"
+    col2.create_index([('created_at', ASCENDING)], name='purge', expireAfterSeconds=[ttl_cache])
+    print ("\033[32mINFO - index: \033[0m")
+  else:
+    print ("\033[32mINFO - index: \033[0m")
+  print ("\033[32m*************************************************************\033[0m")
+  resp2 = db2.images_cache.index_information()
+  print resp2.get('purge')
+  print ("\033[32m*************************************************************\033[0m")
+  print "\033[32mINFO - Fin de la verification index cache\033[0m"
+
+  print "\033[35m###################### Verification de l'index de recherche du cache...############################\033[0m"
+  if  resp2.get('moteur'):
+    print "\033[32mINFO - Index de performance present \033[0m"
+  else:
+    print "\033[31mCRIT - L'index de performance n'est pas present dans la collection\033[0m"
+    print "\033[32mINFO - Creation de l'index de performance\033[0m"
+    col2.create_index([('path', ASCENDING)], name='moteur')
+  print ("\033[32mINFO - index: \033[0m")
+  print ("\033[32m*************************************************************\033[0m")
+  resp2 = db2.images_cache.index_information()
+  print resp2.get('moteur')
+  print ("\033[32m*************************************************************\033[0m")
+  print "\033[32mINFO - Fin de la verification index de performance\033[0m"
+
