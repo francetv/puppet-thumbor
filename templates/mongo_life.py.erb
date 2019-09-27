@@ -105,12 +105,16 @@ def read_parameters(*comp):
 ##############################
 def con_mongo(parameters, env):
   
-  if parameters['mongo_cache_mod'] == 'thumbor_mongodb_storage.result_storages.mongo_result_storage' and env == 'cache':
+  if (parameters['mongo_cache_mod'] == 'thumbor_mongodb_storage.result_storages.mongo_result_storage'\
+    or parameters['mongo_cache_mod'] == 'thumbor_mongodb_storage_web.result_storages.mongo_result_storage')\
+    and env == 'cache':
     uri2 = "mongodb://" + parameters['mongo_cache_user'] + ":" + parameters['mongo_cache_pass'] + "@" + parameters['mongo_cache_server'] \
     + "/?authSource=" + parameters['mongo_cache_authdb'] #+ "&replicaSet=education-preprod"
     instance = MongoClient(uri2)
     return instance
-  elif parameters['mongo_str_mod'] == 'thumbor_mongodb_storage.storages.mongo_storage' and env == 'storage':
+  elif (parameters['mongo_str_mod'] == 'thumbor_mongodb_storage.storages.mongo_storage'\
+    or parameters['mongo_str_mod'] == 'thumbor_mongodb_storage_web.storages.mongo_storage')\
+    and env == 'storage':
     uri2 = "mongodb://" + parameters['mongo_str_user'] + ":" + parameters['mongo_str_pass'] + "@" + parameters['mongo_str_server'] \
     + "/?authSource=" + parameters['mongo_str_authdb'] #+ "&replicaSet=education-preprod"
     instance = MongoClient(uri2)
