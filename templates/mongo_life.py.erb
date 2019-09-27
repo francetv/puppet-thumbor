@@ -170,7 +170,7 @@ def maintenance_tools(parameters):
   if client:
     db2 = client[parameters['mongo_str_db']]
     resp = db2.images.index_information()
-    col = parameters['mongo_str_col']
+    col = db2[parameters['mongo_str_col']]
     if  resp.get('moteur'):
       print "\033[32mSTORAGE - Index de performance present \033[0m"
     else:
@@ -202,7 +202,7 @@ def maintenance_tools(parameters):
       imgc = imgc + 1
       for doc in result:
         files_id = doc['_id']
-        fs = gridfs.GridFS(db)
+        fs = gridfs.GridFS(db2)
         fs.delete(files_id)
         imgfs = imgfs + 1
     print "\033[32mINFO - Fin de purge du stocage -" + str(imgc) + " images / -" + str(imgfs) + " chuncks\033[0m"
