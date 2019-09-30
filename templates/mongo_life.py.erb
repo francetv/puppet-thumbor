@@ -129,11 +129,11 @@ def purge_cache(parameters, path):
   db2 = client[parameters['mongo_cache_db']]
   completed_path= "result:" + path
   
-  if db2.images_cache.find_one({'path': completed_path}):
-    db2.images_cache.delete_one({'path': completed_path})
+  if db2[parameters['mongo_cache_col']].find_one({'path': completed_path}):
+    db2[parameters['mongo_cache_col']].delete_one({'path': completed_path})
     print "\033[32mCACHE - Objet:", completed_path, " supprime\033[0m"
   else:
-    print "\031[31mCACHE - Objet:", path, " non trouve\033[0m"
+    print "\033[31mCACHE - Objet:", path, " non trouve\033[0m"
   sys.exit(0)
 
 ##############################
@@ -142,10 +142,10 @@ def purge_storage(parameters, path):
   client = con_mongo(parameters, 'storage')
   db2 = client[parameters['mongo_str_db']]
   
-  if db2.images.find_one({'path': path}):
+  if db2[parameters['mongo_str_col']].find_one({'path': path}):
     collection = db2.fs.files
-    scan = db2.images.find_one({'path': path})
-    db2.images.delete_one({'_id': scan['_id']})
+    scan = db2[parameters['mongo_str_col']].find_one({'path': path})
+    db2[parameters['mongo_str_col']].delete_one({'_id': scan['_id']})
     result = collection.find({"_id": scan['file_id']})
     imgfs = 0
     for doc in result:
@@ -161,7 +161,7 @@ def purge_storage(parameters, path):
     x = coll3.delete_many({'ref_id': path})
     print "\033[32mSTORAGE - Objet:", path, " supprime, " , imgfs , " chunk," , x.deleted_count ," images associees en cache\033[0m"
   else:
-    print "\031[31mSTORAGE - Objet:", path, " non trouve\033[0m"
+    print "\033[31mSTORAGE - Objet:", path, " non trouve\033[0m"
 
   
   sys.exit(0)
@@ -173,7 +173,7 @@ def maintenance_tools(parameters):
   client = con_mongo(parameters, 'storage')
   if client:
     db2 = client[parameters['mongo_str_db']]
-    resp = db2.images.index_information()
+    resp = db2[parameters['mongo_str_col']].index_information()
     col = db2[parameters['mongo_str_col']]
     if  resp.get('moteur'):
       print "\033[32mSTORAGE - Index de performance present \033[0m"
@@ -218,7 +218,7 @@ def maintenance_tools(parameters):
   client2 = con_mongo(parameters, 'cache')
   if client2:
     db3 = client2[parameters['mongo_cache_db']]
-    resp2 = db3.images_cache.index_information()
+    resp2 = db3[parameters['mongo_cache_col']].index_information()
     col2= db3[parameters['mongo_cache_col']]
     if resp2.get('purge'):
       print "\033[32mCACHE - Index TTL present\033[0m"
@@ -257,7 +257,7 @@ def maintenance_tools(parameters):
     
     print ("\033[32mCACHE - index performance: \033[0m")
     print ("\033[32m*************************************************************\033[0m")
-    resp2 = db3.images_cache.index_information()
+    resp2 = db3[parameters['mongo_cache_col']].index_information()
     print resp2.get('moteur')
     print resp2.get('rmv')
     print ("\033[32m*************************************************************\033[0m")
