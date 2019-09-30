@@ -25,7 +25,7 @@ def main():
   for o, a in opts:
     if o == "-c":
       path_result = a
-      parameters = read_parameters()
+      parameters = read_parameters('cache')
       result_purge = purge_cache(parameters, path_result)
       break
     elif o == "-s":
@@ -35,7 +35,7 @@ def main():
       break
     elif o == "-m":
       maintenance = a
-      parameters = read_parameters()
+      parameters = read_parameters('all')
       result_maintenance = maintenance_tools(parameters)
       break
     else:
@@ -44,7 +44,7 @@ def main():
   
   
 ##############################
-def read_parameters(*comp):
+def read_parameters(comp):
   
   with open('/etc/thumbor/thumbor-8888.conf') as f:
     file_content = u'[main]\n' + f.read()
@@ -55,6 +55,7 @@ def read_parameters(*comp):
   if comp == 'cache':
     
     dictconfig = {
+      "ttl_cache": config_parser.get('main','RESULT_STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
       "mongo_cache_server": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_HOST').replace("\"", ""),
       "mongo_cache_user": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_USER').replace("\"", ""),
       "mongo_cache_pass": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_PASSWORD').replace("\"", ""),
@@ -67,6 +68,7 @@ def read_parameters(*comp):
   elif comp == 'storage':
     
     dictconfig= {
+      "ttl_storage": config_parser.get('main','STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
       "mongo_str_server": config_parser.get('main','MONGO_STORAGE_SERVER_HOST').replace("\"", ""),
       "mongo_str_user": config_parser.get('main','MONGO_STORAGE_SERVER_USER').replace("\"", ""),
       "mongo_str_pass": config_parser.get('main','MONGO_STORAGE_SERVER_PASSWORD').replace("\"", ""),
