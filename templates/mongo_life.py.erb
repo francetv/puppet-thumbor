@@ -197,7 +197,7 @@ def maintenance_tools(parameters):
     today = datetime.today()
     ttl_removefs = int(parameters['ttl_storage'],10)/86400
     # Recherche dans la collection image les images vieilles
-    resultimg = col7.find({"created_at": {"$lt": today - timedelta(days=ttl_removefs)}})
+    resultimg = col7.find({"created_at": {"$lt": today - timedelta(ttl_removefs)}})
     collection = db2.fs.files
     # Recherche les fragments gridFS correspondants
     for img in resultimg:
