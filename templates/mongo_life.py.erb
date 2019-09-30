@@ -131,9 +131,9 @@ def purge_cache(parameters, path):
   
   if db2[parameters['mongo_cache_col']].find_one({'path': completed_path}):
     db2[parameters['mongo_cache_col']].delete_one({'path': completed_path})
-    print "\033[32mCACHE - Objet:", completed_path, " supprime\033[0m"
+    print "\033[32mCACHE - Objet:", completed_path, " supprime \033[0m"
   else:
-    print "\033[31mCACHE - Objet:", path, " non trouve\033[0m"
+    print "\033[32m CACHE - Objet:", path, " non trouve \033[0m"
   sys.exit(0)
 
 ##############################
@@ -161,7 +161,7 @@ def purge_storage(parameters, path):
     x = coll3.delete_many({'ref_id': path})
     print "\033[32mSTORAGE - Objet:", path, " supprime, " , imgfs , " chunk," , x.deleted_count ," images associees en cache\033[0m"
   else:
-    print "\033[31mSTORAGE - Objet:", path, " non trouve\033[0m"
+    print "\033[32mSTORAGE - Objet:", path, " non trouve \033[0m"
 
   
   sys.exit(0)
