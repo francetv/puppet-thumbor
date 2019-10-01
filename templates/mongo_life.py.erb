@@ -66,41 +66,74 @@ def read_parameters(comp):
     }
     
   elif comp == 'storage':
+    if config_parser.get('main','STORAGE') and config_parser.get('main','STORAGE').replace("\"", "") == 'thumbor_mongodb_storage_webp.storages.mongo_storage':
     
-    dictconfig= {
-      "ttl_storage": config_parser.get('main','STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
-      "mongo_str_server": config_parser.get('main','MONGO_STORAGE_SERVER_HOST').replace("\"", ""),
-      "mongo_str_user": config_parser.get('main','MONGO_STORAGE_SERVER_USER').replace("\"", ""),
-      "mongo_str_pass": config_parser.get('main','MONGO_STORAGE_SERVER_PASSWORD').replace("\"", ""),
-      "mongo_str_authdb": config_parser.get('main','MONGO_STORAGE_SERVER_AUTH').replace("\"", ""),
-      "mongo_str_db": config_parser.get('main','MONGO_STORAGE_SERVER_DB').replace("\"", ""),
-      "mongo_str_col": config_parser.get('main','MONGO_STORAGE_SERVER_COLLECTION').replace("\"", ""),
-      "mongo_str_mod": config_parser.get('main','STORAGE').replace("\"", "")
-    }
+      dictconfig= {
+        "ttl_storage": config_parser.get('main','STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
+        "ttl_cache": config_parser.get('main','RESULT_STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
+        "mongo_str_server": config_parser.get('main','MONGO_STORAGE_SERVER_HOST').replace("\"", ""),
+        "mongo_str_user": config_parser.get('main','MONGO_STORAGE_SERVER_USER').replace("\"", ""),
+        "mongo_str_pass": config_parser.get('main','MONGO_STORAGE_SERVER_PASSWORD').replace("\"", ""),
+        "mongo_str_authdb": config_parser.get('main','MONGO_STORAGE_SERVER_AUTH').replace("\"", ""),
+        "mongo_str_db": config_parser.get('main','MONGO_STORAGE_SERVER_DB').replace("\"", ""),
+        "mongo_str_col": config_parser.get('main','MONGO_STORAGE_SERVER_COLLECTION').replace("\"", ""),
+        "mongo_str_mod": config_parser.get('main','STORAGE').replace("\"", ""),
+        # conf cache
+        "mongo_cache_server": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_HOST').replace("\"", ""),
+        "mongo_cache_user": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_USER').replace("\"", ""),
+        "mongo_cache_pass": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_PASSWORD').replace("\"", ""),
+        "mongo_cache_authdb": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_AUTH').replace("\"", ""),
+        "mongo_cache_db": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_DB').replace("\"", ""),
+        "mongo_cache_col": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_COLLECTION').replace("\"", ""),
+        "mongo_cache_mod": config_parser.get('main','RESULT_STORAGE').replace("\"", "")
+      }
+    else:
+      print "\033[31mSTORAGE - Cette fonction n'est pas compatible avec cette instance\033[0m"
+      sys.exit(0)
+
     
   else:
+    if config_parser.get('main','STORAGE').replace("\"", "") == 'thumbor_mongodb_storage_webp.storages.mongo_storage' and\
+    config_parser.get('main','RESULT_STORAGE').replace("\"", "") == 'thumbor_mongodb_storage_webp.result_storages.mongo_result_storage':
+ 
+      dictconfig= {
+        # conf TTL
+        "ttl_storage": config_parser.get('main','STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
+        "ttl_cache": config_parser.get('main','RESULT_STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
+        # conf storage
+        "mongo_str_server": config_parser.get('main','MONGO_STORAGE_SERVER_HOST').replace("\"", ""),
+        "mongo_str_user": config_parser.get('main','MONGO_STORAGE_SERVER_USER').replace("\"", ""),
+        "mongo_str_pass": config_parser.get('main','MONGO_STORAGE_SERVER_PASSWORD').replace("\"", ""),
+        "mongo_str_authdb": config_parser.get('main','MONGO_STORAGE_SERVER_AUTH').replace("\"", ""),
+        "mongo_str_db": config_parser.get('main','MONGO_STORAGE_SERVER_DB').replace("\"", ""),
+        "mongo_str_col": config_parser.get('main','MONGO_STORAGE_SERVER_COLLECTION').replace("\"", ""),
+        "mongo_str_mod": config_parser.get('main','STORAGE').replace("\"", ""),
+        # conf cache
+        "mongo_cache_server": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_HOST').replace("\"", ""),
+        "mongo_cache_user": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_USER').replace("\"", ""),
+        "mongo_cache_pass": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_PASSWORD').replace("\"", ""),
+        "mongo_cache_authdb": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_AUTH').replace("\"", ""),
+        "mongo_cache_db": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_DB').replace("\"", ""),
+        "mongo_cache_col": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_COLLECTION').replace("\"", ""),
+        "mongo_cache_mod": config_parser.get('main','RESULT_STORAGE').replace("\"", ""),
+        "instance_type": 'full'
+      }
     
-    dictconfig= {
-      # conf TTL
-      "ttl_storage": config_parser.get('main','STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
-      "ttl_cache": config_parser.get('main','RESULT_STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
-      # conf storage
-      "mongo_str_server": config_parser.get('main','MONGO_STORAGE_SERVER_HOST').replace("\"", ""),
-      "mongo_str_user": config_parser.get('main','MONGO_STORAGE_SERVER_USER').replace("\"", ""),
-      "mongo_str_pass": config_parser.get('main','MONGO_STORAGE_SERVER_PASSWORD').replace("\"", ""),
-      "mongo_str_authdb": config_parser.get('main','MONGO_STORAGE_SERVER_AUTH').replace("\"", ""),
-      "mongo_str_db": config_parser.get('main','MONGO_STORAGE_SERVER_DB').replace("\"", ""),
-      "mongo_str_col": config_parser.get('main','MONGO_STORAGE_SERVER_COLLECTION').replace("\"", ""),
-      "mongo_str_mod": config_parser.get('main','STORAGE').replace("\"", ""),
-      # conf cache
-      "mongo_cache_server": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_HOST').replace("\"", ""),
-      "mongo_cache_user": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_USER').replace("\"", ""),
-      "mongo_cache_pass": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_PASSWORD').replace("\"", ""),
-      "mongo_cache_authdb": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_AUTH').replace("\"", ""),
-      "mongo_cache_db": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_DB').replace("\"", ""),
-      "mongo_cache_col": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_COLLECTION').replace("\"", ""),
-      "mongo_cache_mod": config_parser.get('main','RESULT_STORAGE').replace("\"", "")
-    }
+    
+    else:
+      dictconfig= {
+        # conf TTL
+        "ttl_cache": config_parser.get('main','RESULT_STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
+        # conf cache
+        "mongo_cache_server": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_HOST').replace("\"", ""),
+        "mongo_cache_user": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_USER').replace("\"", ""),
+        "mongo_cache_pass": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_PASSWORD').replace("\"", ""),
+        "mongo_cache_authdb": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_AUTH').replace("\"", ""),
+        "mongo_cache_db": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_DB').replace("\"", ""),
+        "mongo_cache_col": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_COLLECTION').replace("\"", ""),
+        "mongo_cache_mod": config_parser.get('main','RESULT_STORAGE').replace("\"", ""),
+        "instance_type": 'simple'
+      }
     
   return dictconfig
   
@@ -172,48 +205,49 @@ def purge_storage(parameters, path):
 def maintenance_tools(parameters):
   
   print "\033[35mSTORAGE####################### Verification de l'index de recherche.....##############################\033[0m"
-  client = con_mongo(parameters, 'storage')
-  if client:
-    db2 = client[parameters['mongo_str_db']]
-    resp = db2[parameters['mongo_str_col']].index_information()
-    col = db2[parameters['mongo_str_col']]
-    if  resp.get('moteur'):
-      print "\033[32mSTORAGE - Index de performance present \033[0m"
-    else:
-      print "\033[31mSTORAGE - L'index de performance n'est pas present dans la collection\033[0m"
-      print "\033[32mSTORAGE - Creation de l'index de performance\033[0m"
-      col.create_index([('path', ASCENDING)], name='moteur')
+  if parameters['instance_type'] == 'full':
+    client = con_mongo(parameters, 'storage')
+    if client:
+      db2 = client[parameters['mongo_str_db']]
+      resp = db2[parameters['mongo_str_col']].index_information()
+      col = db2[parameters['mongo_str_col']]
+      if  resp.get('moteur'):
+        print "\033[32mSTORAGE - Index de performance present \033[0m"
+      else:
+        print "\033[31mSTORAGE - L'index de performance n'est pas present dans la collection\033[0m"
+        print "\033[32mSTORAGE - Creation de l'index de performance\033[0m"
+        col.create_index([('path', ASCENDING)], name='moteur')
     
-    print ("\033[32mSTORAGE - index performance: \033[0m")
-    print ("\033[32m*************************************************************\033[0m")
-    resp = db2.images.index_information()
-    print resp.get('moteur')
-    print ("\033[32m*************************************************************\033[0m")
-    print "\033[32mSTORAGE - Fin de la verification index de performance\033[0m"
-    imgc=0
-    imgfs=0
-    goodst=0
-    gooph=0
-    col7 = db2[parameters['mongo_str_col']]
-    print "\033[32mSTORAGE - Supression des images et chunks associes \033[0m"
-    today = datetime.today()
-    ttl_removefs = int(parameters['ttl_storage'],10)/86400
-    # Recherche dans la collection image les images vieilles
-    resultimg = col7.find({"created_at": {"$lt": today - timedelta(ttl_removefs)}})
-    collection = db2.fs.files
-    # Recherche les fragments gridFS correspondants
-    for img in resultimg:
-      col7.delete_one({"_id": img['_id']})
-      result = collection.find({"_id": img['file_id']})
-      imgc = imgc + 1
-      for doc in result:
-        files_id = doc['_id']
-        fs = gridfs.GridFS(db2)
-        fs.delete(files_id)
-        imgfs = imgfs + 1
-    print "\033[32mINFO - Fin de purge du stocage -" + str(imgc) + " images / -" + str(imgfs) + " chuncks\033[0m"
-  else:
-    print "\033[31mSTORAGE - Cette fonction n'ets pas compatible avec cette instance\033[0m"
+      print ("\033[32mSTORAGE - index performance: \033[0m")
+      print ("\033[32m*************************************************************\033[0m")
+      resp = db2.images.index_information()
+      print resp.get('moteur')
+      print ("\033[32m*************************************************************\033[0m")
+      print "\033[32mSTORAGE - Fin de la verification index de performance\033[0m"
+      imgc=0
+      imgfs=0
+      goodst=0
+      gooph=0
+      col7 = db2[parameters['mongo_str_col']]
+      print "\033[32mSTORAGE - Supression des images et chunks associes \033[0m"
+      today = datetime.today()
+      ttl_removefs = int(parameters['ttl_storage'],10)/86400
+      # Recherche dans la collection image les images vieilles
+      resultimg = col7.find({"created_at": {"$lt": today - timedelta(ttl_removefs)}})
+      collection = db2.fs.files
+      # Recherche les fragments gridFS correspondants
+      for img in resultimg:
+        col7.delete_one({"_id": img['_id']})
+        result = collection.find({"_id": img['file_id']})
+        imgc = imgc + 1
+        for doc in result:
+          files_id = doc['_id']
+          fs = gridfs.GridFS(db2)
+          fs.delete(files_id)
+          imgfs = imgfs + 1
+      print "\033[32mINFO - Fin de purge du stocage -" + str(imgc) + " images / -" + str(imgfs) + " chuncks\033[0m"
+    else:
+      print "\033[31mSTORAGE - Cette fonction n'ets pas compatible avec cette instance\033[0m"
     
     
   print "\033[35mCACHE############################# Verification de l'index TTL.....###################################\033[0m"
