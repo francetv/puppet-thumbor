@@ -11,9 +11,9 @@
 <% if key == 'METRICS' and config[key]  == 'tc_prometheus.metrics.prometheus_metrics' -%>
 PROMETHEUS_SCRAPE_PORT = <%= @statp %>
 <% end -%>
-<% if config[key] == 'True' -%>
+<% if config[key] =~ /True/i  then -%>
 <%= key %> = True
-<% elsif config[key] == "False" -%>
+<% elsif config[key] =~ /False/i then -%>
 <%= key %> = False
 <% else -%>
 <%= key %> = <%= config[key].inspect %>
