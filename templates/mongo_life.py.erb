@@ -66,7 +66,7 @@ def read_parameters(comp):
     }
     
   elif comp == 'storage':
-    if config_parser.get('main','STORAGE') and config_parser.get('main','STORAGE').replace("\"", "") == 'thumbor_mongodb_storage_webp.storages.mongo_storage':
+    if config_parser.get('main','STORAGE', fallback='none').replace("\"", "") == 'thumbor_mongodb_storage_webp.storages.mongo_storage':
     
       dictconfig= {
         "ttl_storage": config_parser.get('main','STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
@@ -93,8 +93,8 @@ def read_parameters(comp):
 
     
   else:
-    if config_parser.get('main','STORAGE').replace("\"", "") == 'thumbor_mongodb_storage_webp.storages.mongo_storage' and\
-    config_parser.get('main','RESULT_STORAGE').replace("\"", "") == 'thumbor_mongodb_storage_webp.result_storages.mongo_result_storage':
+    if config_parser.get('main','STORAGE', fallback='none').replace("\"", "") == 'thumbor_mongodb_storage_webp.storages.mongo_storage' and\
+    config_parser.get('main','RESULT_STORAGE', fallback='none').replace("\"", "") == 'thumbor_mongodb_storage_webp.result_storages.mongo_result_storage':
  
       dictconfig= {
         # conf TTL
