@@ -24,13 +24,13 @@ class thumbor::install::pip {
     provider => 'pip'
   }
   -> package { 'remotecv':
-    provider => 'pip',
+    provider => 'pip'
   }
   -> package { 'tc_prometheus':
-    provider => 'pip',
+    provider => 'pip'
   }
   -> package { 'configparser':
-    provider => 'pip',
+    provider => 'pip'
   }
   -> package { 'https://github.com/francetv/thumbor_mongodb_storage/archive/v5.3.0.tar.gz':
     provider => 'pip'
@@ -44,8 +44,11 @@ class thumbor::install::pip {
   -> package { 'https://github.com/francetv/thumbor_mongodb_storage_webp/archive/v6.0.6.tar.gz':
     provider => 'pip'
   }
+  -> package { 'https://github.com/francetv/thumbor_url_signer/archive/v1.0.0.tar.gz':
+    provider => 'pip'
+  } 
   -> package { 'opencv-engine':
-    provider => 'pip',
+    provider => 'pip'
   }
   group { 'thumbor':
     system => true,
