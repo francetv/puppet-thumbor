@@ -44,7 +44,7 @@ class thumbor::install::pip {
   -> package { 'https://github.com/francetv/thumbor_mongodb_storage_webp/archive/v6.0.6.tar.gz':
     provider => 'pip'
   }
-  -> package { 'https://github.com/francetv/thumbor_url_signer/archive/v1.0.0.tar.gz':
+  -> package { 'https://github.com/francetv/thumbor_url_signer/archive/v1.0.1.tar.gz':
     provider => 'pip'
   } 
   -> package { 'opencv-engine':
