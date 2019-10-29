@@ -14,8 +14,8 @@ def main():
   path_storage="aaa"
   try:
     opts, args = getopt.getopt(sys.argv[1:], "c:s:m")
-  except getopt.GetoptError as err:   
-    sys.stdout = sys.stderr    
+  except getopt.GetoptError as err:
+    sys.stdout = sys.stderr
     print """usage: %s [-c|-s|-m] [file|-]
     -c <path> : purge du path dans le cache Mongodb
     -s <path> : purge du path dans le storage Mongodb
@@ -41,11 +41,11 @@ def main():
     else:
       assert False, "Mauvaise option"
       sys.exit(2)
-  
-  
+
+
 ##############################
 def read_parameters(comp):
-  
+
   with open('/etc/thumbor/thumbor-8888.conf') as f:
     file_content = u'[main]\n' + f.read()
 
@@ -53,7 +53,7 @@ def read_parameters(comp):
   config_parser.read_string(file_content)
 
   if comp == 'cache':
-    
+
     dictconfig = {
       "ttl_cache": config_parser.get('main','RESULT_STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
       "mongo_cache_server": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_HOST').replace("\"", ""),
@@ -64,10 +64,10 @@ def read_parameters(comp):
       "mongo_cache_col": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_COLLECTION').replace("\"", ""),
       "mongo_cache_mod": config_parser.get('main','RESULT_STORAGE').replace("\"", "")
     }
-    
+
   elif comp == 'storage':
     if config_parser.get('main','STORAGE', fallback='none').replace("\"", "") == 'thumbor_mongodb_storage_webp.storages.mongo_storage':
-    
+
       dictconfig= {
         "ttl_storage": config_parser.get('main','STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
         "ttl_cache": config_parser.get('main','RESULT_STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
@@ -91,11 +91,11 @@ def read_parameters(comp):
       print "\033[31mSTORAGE - Cette fonction n'est pas compatible avec cette instance\033[0m"
       sys.exit(0)
 
-    
+
   else:
     if config_parser.get('main','STORAGE', fallback='none').replace("\"", "") == 'thumbor_mongodb_storage_webp.storages.mongo_storage' and\
     config_parser.get('main','RESULT_STORAGE', fallback='none').replace("\"", "") == 'thumbor_mongodb_storage_webp.result_storages.mongo_result_storage':
- 
+
       dictconfig= {
         # conf TTL
         "ttl_storage": config_parser.get('main','STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
@@ -118,8 +118,8 @@ def read_parameters(comp):
         "mongo_cache_mod": config_parser.get('main','RESULT_STORAGE').replace("\"", ""),
         "instance_type": 'full'
       }
-    
-    
+
+
     else:
       dictconfig= {
         # conf TTL
@@ -134,12 +134,12 @@ def read_parameters(comp):
         "mongo_cache_mod": config_parser.get('main','RESULT_STORAGE').replace("\"", ""),
         "instance_type": 'simple'
       }
-    
+
   return dictconfig
-  
+
 ##############################
 def con_mongo(parameters, env):
-  
+
   if (parameters['mongo_cache_mod'] == 'thumbor_mongodb_storage.result_storages.mongo_result_storage'\
     or parameters['mongo_cache_mod'] == 'thumbor_mongodb_storage_webp.result_storages.mongo_result_storage')\
     and env == 'cache':
@@ -159,11 +159,11 @@ def con_mongo(parameters, env):
 
 ##############################
 def purge_cache(parameters, path):
-  
+
   client = con_mongo(parameters, 'cache')
   db2 = client[parameters['mongo_cache_db']]
   completed_path= "result:" + path
-  
+
   if db2[parameters['mongo_cache_col']].find_one({'path': completed_path}):
     db2[parameters['mongo_cache_col']].delete_one({'path': completed_path})
     print "\033[32mCACHE - Objet:", completed_path, " supprime \033[0m"
@@ -173,10 +173,10 @@ def purge_cache(parameters, path):
 
 ##############################
 def purge_storage(parameters, path):
-  
+
   client = con_mongo(parameters, 'storage')
   db2 = client[parameters['mongo_str_db']]
-  
+
   if db2[parameters['mongo_str_col']].find_one({'path': path}):
     collection = db2.fs.files
     scan = db2[parameters['mongo_str_col']].find_one({'path': path})
@@ -188,7 +188,7 @@ def purge_storage(parameters, path):
       fs = gridfs.GridFS(db2)
       fs.delete(files_id)
       imgfs = imgfs + 1
-    
+
     client2 = con_mongo(parameters, 'cache')
     db3 = client[parameters['mongo_cache_db']]
     coll3 =  db3[parameters['mongo_cache_col']]
@@ -198,12 +198,12 @@ def purge_storage(parameters, path):
   else:
     print "\033[32mSTORAGE - Objet:", path, " non trouve \033[0m"
 
-  
+
   sys.exit(0)
 
 ##############################
 def maintenance_tools(parameters):
-  
+
   print "\033[35mSTORAGE####################### Verification de l'index de recherche.....##############################\033[0m"
   if parameters['instance_type'] == 'full':
     client = con_mongo(parameters, 'storage')
@@ -217,7 +217,7 @@ def maintenance_tools(parameters):
         print "\033[31mSTORAGE - L'index de performance n'est pas present dans la collection\033[0m"
         print "\033[32mSTORAGE - Creation de l'index de performance\033[0m"
         col.create_index([('path', ASCENDING)], name='moteur')
-    
+
       print ("\033[32mSTORAGE - index performance: \033[0m")
       print ("\033[32m*************************************************************\033[0m")
       resp = db2.images.index_information()
@@ -248,34 +248,35 @@ def maintenance_tools(parameters):
       print "\033[32mINFO - Fin de purge du stocage -" + str(imgc) + " images / -" + str(imgfs) + " chuncks\033[0m"
     else:
       print "\033[31mSTORAGE - Cette fonction n'ets pas compatible avec cette instance\033[0m"
-    
-    
+
+
   print "\033[35mCACHE############################# Verification de l'index TTL.....###################################\033[0m"
   client2 = con_mongo(parameters, 'cache')
   if client2:
     db3 = client2[parameters['mongo_cache_db']]
     resp2 = db3[parameters['mongo_cache_col']].index_information()
     col2= db3[parameters['mongo_cache_col']]
+    tta2= int(parameters['ttl_cache'],10)
     if resp2.get('purge'):
       print "\033[32mCACHE - Index TTL present\033[0m"
       eee2 = resp2.get('purge')
-      aaa2 = map(int ,eee2['expireAfterSeconds']);
-      tta2= int(parameters['ttl_cache'],10)
-      if aaa2[0] >> tta2:
-        print "\033[34mCACHE - Le TTL en base (",aaa2[0],") est superieur a la configuration (", parameters['ttl_cache'],"\033[0m)"
+      aaa2 = int(eee2['expireAfterSeconds']);
+      #aaa2 = map(int ,eee2['expireAfterSeconds']);
+      if aaa2 >> tta2:
+        print "\033[34mCACHE - Le TTL en base (",aaa2,") est superieur a la configuration (", parameters['ttl_cache'],"\033[0m)"
         print "\033[32mCACHE - Supression de l'index de purge\033[0m"
         col2.drop_index('purge')
-        col2.create_index([('created_at', ASCENDING)], name='purge', expireAfterSeconds=[parameters['ttl_cache']])
-      elif aaa2[0] == tta2:
-        print "\033[32mCACHE - Le TTL en base (",aaa2[0],") est identique a la configuration (",parameters['ttl_cache'],")\033[0m"
+        col2.create_index([('created_at', ASCENDING)], name='purge', expireAfterSeconds=tta2)
+      elif aaa2 == tta2:
+        print "\033[32mCACHE - Le TTL en base (",aaa2,") est identique a la configuration (",parameters['ttl_cache'],")\033[0m"
       else:
-        print "\033[34mCACHE - Le TTL en base (",aaa2[0],") est inferieur a la configuration (",parameters['ttl_cache'],")\033[0m"
+        print "\033[34mCACHE - Le TTL en base (",aaa2,") est inferieur a la configuration (",parameters['ttl_cache'],")\033[0m"
         col2.drop_index('purge')
-        col2.create_index([('created_at', ASCENDING)], name='purge', expireAfterSeconds=[parameters['ttl_cache']])
+        col2.create_index([('created_at', ASCENDING)], name='purge', expireAfterSeconds=tta2)
     else:
       print "\033[31mCACHE - L'index de purge n'est pas present dans la collection\033[0m"
-      col2.create_index([('created_at', ASCENDING)], name='purge', expireAfterSeconds=[parameters['ttl_cache']])
-      
+      col2.create_index([('created_at', ASCENDING)], name='purge', expireAfterSeconds=tta2)
+
     print "\033[35mCACHE######################### Verification de l'index de recherche.....##############################\033[0m"
     if  resp2.get('moteur'):
       print "\033[32mCACHE - Index de performance present\033[0m"
@@ -283,14 +284,14 @@ def maintenance_tools(parameters):
       print "\033[31mCACHE - L'index de performance n'est pas present dans la collection\033[0m"
       print "\033[32mCACHE - Creation de l'index de performance\033[0m"
       col2.create_index([('path', ASCENDING)], name='moteur')
-    
+
     if  resp2.get('rmv'):
       print "\033[32mCACHE - Index de performance II present\033[0m"
     else:
       print "\033[31mCACHE - L'index de performance II n'est pas present dans la collection\033[0m"
       print "\033[32mCACHE - Creation de l'index de performance II\033[0m"
       col2.create_index([('ref_id', ASCENDING)], name='rmv')
-    
+
     print ("\033[32mCACHE - index performance: \033[0m")
     print ("\033[32m*************************************************************\033[0m")
     resp2 = db3[parameters['mongo_cache_col']].index_information()
