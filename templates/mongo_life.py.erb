@@ -9,17 +9,19 @@ import configparser
 
 ##############################
 def main():
+  version_s="1.0.135"
   path_result=""
   maintenance=""
   path_storage="aaa"
   try:
-    opts, args = getopt.getopt(sys.argv[1:], "c:s:m")
+      opts, args = getopt.getopt(sys.argv[1:], "c:s:m:v")
   except getopt.GetoptError as err:
     sys.stdout = sys.stderr
-    print """usage: %s [-c|-s|-m] [file|-]
+    print """usage: %s [-c|-s|-m|-z] [file|-]
     -c <path> : purge du path dans le cache Mongodb
     -s <path> : purge du path dans le storage Mongodb
-    -m : Effectue la maintenance de base Mongodb Index et coherence'"""%sys.argv[0]
+    -m : Effectue la maintenance de base Mongodb Index et coherence
+    -v : Affiche la version"""%sys.argv[0]
     sys.exit(2)
 
   for o, a in opts:
@@ -38,9 +40,13 @@ def main():
       parameters = read_parameters('all')
       result_maintenance = maintenance_tools(parameters)
       break
+    elif o == "-v":
+      print "Version %s "%version_s
+      sys.exit(0)
     else:
       assert False, "Mauvaise option"
       sys.exit(2)
+
 
 
 ##############################
