@@ -2,6 +2,8 @@
 from pymongo import *
 from datetime import datetime
 from datetime import timedelta
+from prometheus_client.parser import text_string_to_metric_families
+import requests
 import os, sys
 import getopt
 import gridfs
@@ -14,13 +16,14 @@ def main():
   maintenance=""
   path_storage="aaa"
   try:
-      opts, args = getopt.getopt(sys.argv[1:], "c:s:m:v")
+      opts, args = getopt.getopt(sys.argv[1:], "c:s:m:l:v")
   except getopt.GetoptError as err:
     sys.stdout = sys.stderr
     print """usage: %s [-c|-s|-m|-v] [file|-]
     -c <path> : purge du path dans le cache Mongodb
     -s <path> : purge du path dans le storage Mongodb
     -m - : Effectue la maintenance de base Mongodb Index et coherence
+    -l - : Affiche les statistiques
     -v : Affiche la version"""%sys.argv[0]
     sys.exit(2)
 
@@ -43,6 +46,28 @@ def main():
     elif o == "-v":
       print "Version %s "%version_s
       sys.exit(0)
+
+    elif o == "-l":
+      try:
+          metrics = requests.get("http://127.0.0.1:8988",timeout=5)
+          if metrics.status_code == 200:
+              load(metrics.content, "8888")
+      except:
+          print "Pas d'instance statistique sur le port 8988\n"
+      try:
+          metrics = requests.get("http://127.0.0.1:8989",timeout=5)
+          if metrics.status_code == 200:
+              load(metrics.content, "8889")
+      except:
+          print "Pas d'instance statistique sur le port 8989\n"
+      try:
+          metrics = requests.get("http://127.0.0.1:8999",timeout=5)
+          if metrics.status_code == 200:
+              load(metrics.content, "8890")
+      except:
+          print "***** Pas d'instance statistique sur le port 8990 *****\n"
+      sys.exit(0)
+
     else:
       assert False, "Mauvaise option"
       sys.exit(2)
@@ -309,4 +334,146 @@ def maintenance_tools(parameters):
     print "\033[31mCACHE - Cette fonction n'ets pas compatible avec cette instance\033[0m"
 
 ##############################
+def load(metrics, inst):
+  jpg_total=[0]
+  png_total=[0]
+  gif_total=[0]
+  webp_total=[0]
+  miss_str_total=[0]
+  hit_str_total=[0]
+  hit_total=[0]
+  miss_total=[0]
+  http_ok_total=[0]
+  http_nm_total=[0]
+  http_err_total=[0]
+  http_total=[0]
+  sum_temp_png=[0]
+  count_temp_png=[0.00001]
+  sum_temp_jpg=[0.00001]
+  count_temp_jpg=[0.00001]
+  sum_temp_gif=[0.00001]
+  count_temp_gif=[0.00001]
+  sum_temp_webp=[0.00001]
+  count_temp_webp=[0.00001]
+  process_time=[0]
+  cpu_time=[0]
+  mem_virtual=[0]
+  mem_resident=[0]
+  fds_open=[0]
+  fds_max=[0]
+
+  for family in text_string_to_metric_families(metrics):
+    for sample in family.samples:
+      #### hit cache
+      if ("{0}".format(*sample) == "thumbor_result__storage_hit_total") and ("{1}".format(*sample) == "{}"):
+          hit_total="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "thumbor_result__storage_miss_total") and ("{1}".format(*sample) == "{}"):
+          miss_total="{2}".format(*sample).split(".")
+      #### hit storage
+      if ("{0}".format(*sample) == "thumbor_storage_hit_total") and ("{1}".format(*sample) == "{}"):
+          hit_str_total="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "thumbor_storage_miss_total") and ("{1}".format(*sample) == "{}"):
+          miss_str_total="{2}".format(*sample).split(".")
+      #### hit format
+      elif ("{0}".format(*sample) == "thumbor_response_format_total") and ("{1}".format(*sample) == "{'extension': 'jpg'}"):
+          jpg_total="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "thumbor_response_format_total") and ("{1}".format(*sample) == "{'extension': 'png'}"):
+          png_total="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "thumbor_response_format_total") and ("{1}".format(*sample) == "{'extension': 'gif'}"):
+          gif_total="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "thumbor_response_format_total") and ("{1}".format(*sample) == "{'extension': 'webp'}"):
+          webp_total="{2}".format(*sample).split(".")
+      #### code status
+      elif ("{0}".format(*sample) == "thumbor_response_count_total") and ("{1}".format(*sample) == "{}"):
+          http_total="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "thumbor_response_status_total") and ("{1}".format(*sample) == "{'statuscode': '200'}"):
+          http_ok_total="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "thumbor_response_status_total") and ("{1}".format(*sample) == "{'statuscode': '304'}"):
+          http_nm_total="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "thumbor_response_status_total") and ("{1}".format(*sample) == "{'statuscode': '400'}"):
+          http_err_total="{2}".format(*sample).split(".")
+      #### Temps de reponse
+      elif ("{0}".format(*sample) == "thumbor_response_time_count") and ("{1}".format(*sample) == "{'statuscode_extension': 'jpg'}"):
+          count_temp_jpg="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "thumbor_response_time_sum") and ("{1}".format(*sample) == "{'statuscode_extension': 'jpg'}"):
+          sum_temp_jpg="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "thumbor_response_time_count") and ("{1}".format(*sample) == "{'statuscode_extension': 'png'}"):
+          count_temp_png="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "thumbor_response_time_sum") and ("{1}".format(*sample) == "{'statuscode_extension': 'png'}"):
+          sum_temp_png="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "thumbor_response_time_count") and ("{1}".format(*sample) == "{'statuscode_extension': 'gif'}"):
+          count_temp_gif="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "thumbor_response_time_sum") and ("{1}".format(*sample) == "{'statuscode_extension': 'gif'}"):
+          sum_temp_gif="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "thumbor_response_time_count") and ("{1}".format(*sample) == "{'statuscode_extension': 'webp'}"):
+          count_temp_webp="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "thumbor_response_time_sum") and ("{1}".format(*sample) == "{'statuscode_extension': 'webp'}"):
+          sum_temp_webp="{2}".format(*sample).split(".")
+
+
+      #### PROCESS
+      elif ("{0}".format(*sample) == "process_start_time_seconds") and ("{1}".format(*sample) == "{}"):
+          process_time="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "process_cpu_seconds_total") and ("{1}".format(*sample) == "{}"):
+          cpu_time="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "process_virtual_memory_bytes") and ("{1}".format(*sample) == "{}"):
+          mem_virtual="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "process_resident_memory_bytes") and ("{1}".format(*sample) == "{}"):
+          mem_resident="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "process_open_fds") and ("{1}".format(*sample) == "{}"):
+          fds_open="{2}".format(*sample).split(".")
+      elif ("{0}".format(*sample) == "process_max_fds") and ("{1}".format(*sample) == "{}"):
+          fds_max="{2}".format(*sample).split(".")
+
+  ######### process
+  print '\n##############################################'
+  print '############## PROCESSUS ' + inst + ' ################'
+  start_time=datetime.utcfromtimestamp(float(process_time[0])).strftime('%Y-%m-%d %H:%M:%S')
+  print('En fonction depuis: ' + start_time )
+  print('Temps Cpu consomme: ' + str(int(cpu_time[0])) + ' s ')
+  moy_virt=(int(mem_virtual[0]) /8) / 1024 / 1024
+  print('Memoire virtuelle utilise: ' + str(int(moy_virt))) + 'Mo'
+  moy_res=(int(mem_resident[0]) /8) / 1024 / 1024
+  print('Memoire utilise: ' + str(int(moy_res))) + 'Mo'
+  print('File descriptor: ' + str(int(fds_open[0])) + ' utilises sur ' + str(int(fds_max[0])))
+
+  ########## hit
+  print "############ STATISTIQUES HITS ###############"
+  print('Nombre de demande: ' + str(int(http_total[0])))
+  percent_okhttp=(100/ (float(http_ok_total[0]) + float(http_err_total[0]) + float(http_nm_total[0]))) *float(http_ok_total[0])
+  print('Nombre de 200 http: ' + str(int(http_ok_total[0]))+ ' (' +  str(int(percent_okhttp)) + '%)')
+  percent_nmhttp=(100/ (float(http_ok_total[0]) + float(http_err_total[0]) + float(http_nm_total[0]))) *float(http_nm_total[0])
+  print('Nombre de 30x http: ' + str(int(http_nm_total[0]))+ ' (' +  str(int(percent_nmhttp)) + '%)')
+  percent_errhttp=(100/ (float(http_ok_total[0]) + float(http_err_total[0]) + float(http_nm_total[0]))) *float(http_err_total[0])
+  print('Nombre de 400 http: ' + str(int(http_err_total[0]))+ ' (' +  str(int(percent_errhttp)) + '%)')
+  ####### JPEG
+  percent_jpeg=(100/ (float(jpg_total[0]) + float(png_total[0]) + float(gif_total[0]) + float(webp_total[0]) )) *float(jpg_total[0])
+  print('Nombre de Jpeg demande: ' + str(int(jpg_total[0]))+ ' (' +  str(int(percent_jpeg)) + '%)')
+  ####### PNG
+  percent_png=(100/ (float(jpg_total[0]) + float(png_total[0]) + float(gif_total[0])  + float(webp_total[0])  )) *float(png_total[0])
+  print('Nombre de Png  demande: ' + str(int(png_total[0]))+ ' (' +  str(int(percent_png)) + '%)')
+  ####### GIF
+  percent_gif=(100/ (float(jpg_total[0]) + float(png_total[0]) + float(gif_total[0])  + float(webp_total[0]) )) *float(gif_total[0])
+  print('Nombre de Gif  demande: ' + str(int(gif_total[0]))+ ' (' +  str(int(percent_gif)) + '%)')
+  ####### WEBP
+  percent_webp=(100/ (float(jpg_total[0]) + float(png_total[0]) + float(gif_total[0])  + float(webp_total[0]) )) *float(webp_total[0])
+  print('Nombre de Webp demande: ' + str(int(webp_total[0]))+ ' (' +  str(int(percent_webp)) + '%)')
+  ###### Temps de reponse
+  print "############ STATISTIQUES TEMPS ##############"
+  moy_jpg=(float(sum_temp_jpg[0]) / float(count_temp_jpg[0])) /1000
+  print('Temps moyen par Jpeg: ' + str(round(moy_jpg,3))) + ' s'
+  moy_png=(float(sum_temp_png[0]) / float(count_temp_png[0])) /1000
+  print('Temps moyen par Png : ' + str(round(moy_png,3))) + ' s'
+  moy_gif=(float(sum_temp_gif[0]) / float(count_temp_gif[0])) /1000
+  print('Temps moyen par Gif : ' + str(round(moy_gif,3))) + ' s'
+  moy_webp=(float(sum_temp_webp[0]) / float(count_temp_webp[0])) /1000
+  print('Temps moyen par Webp: ' + str(round(moy_webp,3))) + ' s'
+  print "######## STATISTIQUES PERFORMANCE ############"
+  ######### % hit storage ########
+  percent_storage=(100/(float(hit_str_total[0]) + float(miss_str_total[0])))*float(hit_str_total[0])
+  print('Hits sur storage: ' + str(int(hit_str_total[0]))+ ' (' +  str(int(percent_storage)) + '%)')
+  ####### % de hit cache #######
+  percent_cache=(100/(float(hit_total[0]) + float(miss_total[0])))*float(hit_total[0])
+  print('Hits en cache: ' + str(int(hit_total[0]))+ ' (' +  str(int(percent_cache)) + '%)\n')
+
 main()
