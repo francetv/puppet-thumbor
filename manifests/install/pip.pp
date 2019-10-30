@@ -13,6 +13,9 @@ class thumbor::install::pip {
     'libjpeg-turbo-progs',
     'pngquant'
   ]: }
+  -> package { 'requests':
+    provider => 'pip'
+  }
   -> package { 'colour':
     provider => 'pip'
   }
