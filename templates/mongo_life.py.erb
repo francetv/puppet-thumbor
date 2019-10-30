@@ -475,5 +475,5 @@ def load(metrics, inst):
   ####### % de hit cache #######
   percent_cache=(100/(float(hit_total[0]) + float(miss_total[0])))*float(hit_total[0])
   print('Hits en cache: ' + str(int(hit_total[0]))+ ' (' +  str(int(percent_cache)) + '%)\n')
-
+  return True
 main()
