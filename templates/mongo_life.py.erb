@@ -53,19 +53,19 @@ def main():
           if metrics.status_code == 200:
               load(metrics.content, "8888")
       except:
-          print "Pas d'instance statistique sur le port 8988\n"
+          print "\n***** Pas d'instance statistique sur le port 8988 *****\n"
       try:
           metrics = requests.get("http://127.0.0.1:8989",timeout=5)
           if metrics.status_code == 200:
               load(metrics.content, "8889")
       except:
-          print "Pas d'instance statistique sur le port 8989\n"
+          print "\n***** Pas d'instance statistique sur le port 8989 *****\n"
       try:
           metrics = requests.get("http://127.0.0.1:8999",timeout=5)
           if metrics.status_code == 200:
               load(metrics.content, "8890")
       except:
-          print "***** Pas d'instance statistique sur le port 8990 *****\n"
+          print "\n***** Pas d'instance statistique sur le port 8990 *****\n"
       sys.exit(0)
 
     else:
