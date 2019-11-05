@@ -50,22 +50,19 @@ def main():
     elif o == "-l":
       try:
           metrics = requests.get("http://127.0.0.1:8988",timeout=5)
-          if metrics.status_code == 200:
-              load(metrics.content, "8888")
+          load(metrics.content, "8888")
       except:
-          print "\n***** Pas d'instance statistique sur le port 8988 *****\n"
+          print "\n***** Pas d'instance statistique lisible sur le port 8988 *****\n"
       try:
           metrics = requests.get("http://127.0.0.1:8989",timeout=5)
-          if metrics.status_code == 200:
-              load(metrics.content, "8889")
+          load(metrics.content, "8889")
       except:
-          print "\n***** Pas d'instance statistique sur le port 8989 *****\n"
+          print "\n***** Pas d'instance statistique lisible sur le port 8989 *****\n"
       try:
           metrics = requests.get("http://127.0.0.1:8999",timeout=5)
-          if metrics.status_code == 200:
-              load(metrics.content, "8890")
+          load(metrics.content, "8890")
       except:
-          print "\n***** Pas d'instance statistique sur le port 8990 *****\n"
+          print "\n***** Pas d'instance statistique lisible sur le port 8990 *****\n"
       sys.exit(0)
 
     else:
@@ -247,7 +244,7 @@ def maintenance_tools(parameters):
       else:
         print "\033[31mSTORAGE - L'index de performance n'est pas present dans la collection\033[0m"
         print "\033[32mSTORAGE - Creation de l'index de performance\033[0m"
-        col.create_index([('path', ASCENDING)], name='moteur')
+        col.create_index([('path', ASCENDIiNG)], background='true', name='moteur')
 
       print ("\033[32mSTORAGE - index performance: \033[0m")
       print ("\033[32m*************************************************************\033[0m")
@@ -276,7 +273,7 @@ def maintenance_tools(parameters):
           fs = gridfs.GridFS(db2)
           fs.delete(files_id)
           imgfs = imgfs + 1
-      print "\033[32mINFO - Fin de purge du stocage -" + str(imgc) + " images / -" + str(imgfs) + " chuncks\033[0m"
+      print "\033[32mINFO - Fin de purge du stockage -" + str(imgc) + " images / -" + str(imgfs) + " chuncks\033[0m"
     else:
       print "\033[31mSTORAGE - Cette fonction n'ets pas compatible avec cette instance\033[0m"
 
@@ -297,16 +294,16 @@ def maintenance_tools(parameters):
         print "\033[34mCACHE - Le TTL en base (",aaa2,") est superieur a la configuration (", parameters['ttl_cache'],"\033[0m)"
         print "\033[32mCACHE - Supression de l'index de purge\033[0m"
         col2.drop_index('purge')
-        col2.create_index([('created_at', ASCENDING)], name='purge', expireAfterSeconds=tta2)
+        col2.create_index([('created_at', ASCENDING)], background='true', name='purge', expireAfterSeconds=tta2)
       elif aaa2 == tta2:
         print "\033[32mCACHE - Le TTL en base (",aaa2,") est identique a la configuration (",parameters['ttl_cache'],")\033[0m"
       else:
         print "\033[34mCACHE - Le TTL en base (",aaa2,") est inferieur a la configuration (",parameters['ttl_cache'],")\033[0m"
         col2.drop_index('purge')
-        col2.create_index([('created_at', ASCENDING)], name='purge', expireAfterSeconds=tta2)
+        col2.create_index([('created_at', ASCENDING)], background='true', name='purge', expireAfterSeconds=tta2)
     else:
       print "\033[31mCACHE - L'index de purge n'est pas present dans la collection\033[0m"
-      col2.create_index([('created_at', ASCENDING)], name='purge', expireAfterSeconds=tta2)
+      col2.create_index([('created_at', ASCENDING)], background='true', name='purge', expireAfterSeconds=tta2)
 
     print "\033[35mCACHE######################### Verification de l'index de recherche.....##############################\033[0m"
     if  resp2.get('moteur'):
@@ -314,14 +311,14 @@ def maintenance_tools(parameters):
     else:
       print "\033[31mCACHE - L'index de performance n'est pas present dans la collection\033[0m"
       print "\033[32mCACHE - Creation de l'index de performance\033[0m"
-      col2.create_index([('path', ASCENDING)], name='moteur')
+      col2.create_index([('path', ASCENDING)], background='true', name='moteur')
 
     if  resp2.get('rmv'):
       print "\033[32mCACHE - Index de performance II present\033[0m"
     else:
       print "\033[31mCACHE - L'index de performance II n'est pas present dans la collection\033[0m"
       print "\033[32mCACHE - Creation de l'index de performance II\033[0m"
-      col2.create_index([('ref_id', ASCENDING)], name='rmv')
+      col2.create_index([('ref_id', ASCENDING)], background='true', name='rmv')
 
     print ("\033[32mCACHE - index performance: \033[0m")
     print ("\033[32m*************************************************************\033[0m")
@@ -335,32 +332,11 @@ def maintenance_tools(parameters):
 
 ##############################
 def load(metrics, inst):
-  jpg_total=[0]
-  png_total=[0]
-  gif_total=[0]
-  webp_total=[0]
-  miss_str_total=[0]
-  hit_str_total=[0]
-  hit_total=[0]
-  miss_total=[0]
-  http_ok_total=[0]
-  http_nm_total=[0]
-  http_err_total=[0]
-  http_total=[0]
-  sum_temp_png=[0]
-  count_temp_png=[0.00001]
-  sum_temp_jpg=[0.00001]
-  count_temp_jpg=[0.00001]
-  sum_temp_gif=[0.00001]
-  count_temp_gif=[0.00001]
-  sum_temp_webp=[0.00001]
-  count_temp_webp=[0.00001]
-  process_time=[0]
-  cpu_time=[0]
-  mem_virtual=[0]
-  mem_resident=[0]
-  fds_open=[0]
-  fds_max=[0]
+  
+  [jpg_total, png_total,gif_total,webp_total] = [[0.00001] for i in range(4)]
+  [miss_str_total, hit_str_total,hit_total,miss_total,http_ok_total,http_nm_total,http_err_total,http_total] = [[0.00001] for i in range(8)]
+  [sum_temp_png, count_temp_png,sum_temp_jpg,count_temp_jpg,sum_temp_gif,count_temp_gif,sum_temp_webp,count_temp_webp] = [[0.00001] for i in range(8)]
+  [process_time, cpu_time,mem_virtual,mem_resident,fds_open,fds_max] = [[0] for i in range(6)]
 
   for family in text_string_to_metric_families(metrics):
     for sample in family.samples:
