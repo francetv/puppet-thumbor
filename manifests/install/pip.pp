@@ -38,13 +38,13 @@ class thumbor::install::pip {
   -> package { 'https://github.com/francetv/thumbor_mongodb_storage/archive/v5.3.0.tar.gz':
     provider => 'pip'
   }
-  -> package { 'https://github.com/francetv/thumbor_mongodb_loader/archive/v1.2.3.tar.gz':
+  -> package { 'https://github.com/francetv/thumbor_mongodb_loader/archive/v1.2.5.tar.gz':
     provider => 'pip'
   }
   -> package { 'https://github.com/francetv/thumbor_file_loader_pic/archive/v1.0.1.tar.gz':
     provider => 'pip'
   }
-  -> package { 'https://github.com/francetv/thumbor_mongodb_storage_webp/archive/v6.0.6.tar.gz':
+  -> package { 'https://github.com/francetv/thumbor_mongodb_storage_webp/archive/v6.1.0.tar.gz':
     provider => 'pip'
   }
   -> package { 'https://github.com/francetv/thumbor_url_signer/archive/v1.0.1.tar.gz':
