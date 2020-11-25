@@ -11,7 +11,7 @@ import configparser
 
 ##############################
 def main():
-  version_s="1.2.2"
+  version_s="1.2.3"
   path_result=""
   maintenance=""
   path_storage="aaa"
@@ -94,7 +94,7 @@ def read_parameters(comp):
     }
 
   elif comp == 'storage':
-    if config_parser.get('main','STORAGE', fallback='none').replace("\"", "") == 'thumbor_mongodb_storage_webp.storages.mongo_storage':
+    if config_parser.get('main','STORAGE', fallback='none').replace("\"", "") == 'thumbor_ftvnum_libs.storages.mongodb_webp_storage':
 
       dictconfig= {
         "ttl_storage": config_parser.get('main','STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
@@ -121,8 +121,8 @@ def read_parameters(comp):
 
 
   else:
-    if config_parser.get('main','STORAGE', fallback='none').replace("\"", "") == 'thumbor_mongodb_storage_webp.storages.mongo_storage' and\
-    config_parser.get('main','RESULT_STORAGE', fallback='none').replace("\"", "") == 'thumbor_mongodb_storage_webp.result_storages.mongo_result_storage':
+    if config_parser.get('main','STORAGE', fallback='none').replace("\"", "") == 'thumbor_ftvnum_libs.storages.mongodb_webp_storage' and\
+    config_parser.get('main','RESULT_STORAGE', fallback='none').replace("\"", "") == 'thumbor_ftvnum_libs.result_storages.mongodb_webp_result_storage':
 
       dictconfig= {
         # conf TTL
@@ -169,14 +169,14 @@ def read_parameters(comp):
 def con_mongo(parameters, env):
 
   if (parameters['mongo_cache_mod'] == 'thumbor_mongodb_storage.result_storages.mongo_result_storage'\
-    or parameters['mongo_cache_mod'] == 'thumbor_mongodb_storage_webp.result_storages.mongo_result_storage')\
+    or parameters['mongo_cache_mod'] == 'thumbor_ftvnum_libs.result_storages.mongodb_webp_result_storage')\
     and env == 'cache':
     uri2 = "mongodb://" + parameters['mongo_cache_user'] + ":" + parameters['mongo_cache_pass'] + "@" + parameters['mongo_cache_server'] \
     + "/?authSource=" + parameters['mongo_cache_authdb'] #+ "&replicaSet=education-preprod"
     instance = MongoClient(uri2)
     return instance
   elif (parameters['mongo_str_mod'] == 'thumbor_mongodb_storage.storages.mongo_storage'\
-    or parameters['mongo_str_mod'] == 'thumbor_mongodb_storage_webp.storages.mongo_storage')\
+    or parameters['mongo_str_mod'] == 'thumbor_ftvnum_libs.storages.mongodb_webp_storage')\
     and env == 'storage':
     uri2 = "mongodb://" + parameters['mongo_str_user'] + ":" + parameters['mongo_str_pass'] + "@" + parameters['mongo_str_server'] \
     + "/?authSource=" + parameters['mongo_str_authdb'] #+ "&replicaSet=education-preprod"
