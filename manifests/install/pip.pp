@@ -11,7 +11,9 @@ class thumbor::install::pip {
     'libmemcached-dev',
     'libcurl4-openssl-dev',
     'libjpeg-turbo-progs',
-    'pngquant'
+    'gifsicle',
+    'pngquant',
+    'ffmpeg'
   ]: }
   -> package { 'requests':
     provider => 'pip'
@@ -48,6 +50,9 @@ class thumbor::install::pip {
     provider => 'pip'
   }
   -> package { 'https://github.com/francetv/thumbor_url_signer/archive/v1.0.1.tar.gz':
+    provider => 'pip'
+  }
+  -> package { 'https://github.com/francetv/thumbor_ftvnum_libs/archive/0.1.0.tar.gz':
     provider => 'pip'
   } 
   -> package { 'opencv-engine':
