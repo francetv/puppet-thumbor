@@ -52,7 +52,7 @@ class thumbor::install::pip {
   -> package { 'https://github.com/francetv/thumbor_url_signer/archive/v1.0.1.tar.gz':
     provider => 'pip'
   }
-  -> package { 'https://github.com/francetv/thumbor_ftvnum_libs/archive/0.1.0.tar.gz':
+  -> package { 'https://github.com/francetv/thumbor_ftvnum_libs/archive/0.1.1.tar.gz':
     provider => 'pip'
   } 
   -> package { 'opencv-engine':
