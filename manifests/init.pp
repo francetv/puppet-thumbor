@@ -33,6 +33,9 @@ $install_method = 'pip'
   } elsif $install_method == 'pip' {
     include thumbor::install::pip
     Class['thumbor::install::pip'] -> Class['thumbor::config']
+  } elsif $install_method == 'pip3' {
+    include thumbor::install::pip3
+    Class['thumbor::install::pip3'] -> Class['thumbor::config']
   } else {
     fail("install_method must be 'apt' or 'pip'")
   }

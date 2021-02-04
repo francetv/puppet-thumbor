@@ -1,6 +1,28 @@
 # == Class: thumbor::params
 #
 class thumbor::params {
+
+$runos = $facts['os']['family'] ? {
+  'Debian' => '' 
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   case $::osfamily {
     'Debian': {
       $security_key='MY_SECURE_KEY'
@@ -9,7 +31,11 @@ class thumbor::params {
       $path_log='/var/log/thumbor'
       $config = {}
       $conffile = '/dev/null'
-      $install_method = 'pip'
+      if versioncmp($::operatingsystemrelease, '10') >= 0 {
+        $install_method = 'pip3'
+      } else {
+        $install_method = 'pip'
+      }
     }
     default: {
       fail("Unsupported platform: ${::osfamily}/${::operatingsystem}")
