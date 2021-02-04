@@ -1,28 +1,6 @@
 # == Class: thumbor::params
 #
 class thumbor::params {
-
-$runos = $facts['os']['family'] ? {
-  'Debian' => '' 
-  
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   case $::osfamily {
     'Debian': {
       $security_key='MY_SECURE_KEY'
