@@ -23,7 +23,7 @@ class thumbor::install::pip {
   }
   -> package { 'thumbor':
     provider => 'pip',
-    ensure => '6.7.0'
+    ensure => '6.7.5'
   }
   -> package { 'thumbor-plugins':
     provider => 'pip'
