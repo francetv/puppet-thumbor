@@ -8,10 +8,11 @@ import os, sys
 import getopt
 import gridfs
 import configparser
+import urllib
 
 ##############################
 def main():
-  version_s="1.2.3"
+  version_s="1.2.4"
   path_result=""
   maintenance=""
   path_storage="aaa"
@@ -85,8 +86,8 @@ def read_parameters(comp):
     dictconfig = {
       "ttl_cache": config_parser.get('main','RESULT_STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
       "mongo_cache_server": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_HOST').replace("\"", ""),
-      "mongo_cache_user": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_USER').replace("\"", ""),
-      "mongo_cache_pass": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_PASSWORD').replace("\"", ""),
+      "mongo_cache_user": urllib.quote_plus(config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_USER').replace("\"", "")),
+      "mongo_cache_pass": urllib.quote_plus(config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_PASSWORD').replace("\"", "")),
       "mongo_cache_authdb": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_AUTH').replace("\"", ""),
       "mongo_cache_db": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_DB').replace("\"", ""),
       "mongo_cache_col": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_COLLECTION').replace("\"", ""),
@@ -100,16 +101,16 @@ def read_parameters(comp):
         "ttl_storage": config_parser.get('main','STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
         "ttl_cache": config_parser.get('main','RESULT_STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
         "mongo_str_server": config_parser.get('main','MONGO_STORAGE_SERVER_HOST').replace("\"", ""),
-        "mongo_str_user": config_parser.get('main','MONGO_STORAGE_SERVER_USER').replace("\"", ""),
-        "mongo_str_pass": config_parser.get('main','MONGO_STORAGE_SERVER_PASSWORD').replace("\"", ""),
+        "mongo_str_user": urllib.quote_plus(config_parser.get('main','MONGO_STORAGE_SERVER_USER').replace("\"", "")),
+        "mongo_str_pass": urllib.quote_plus(config_parser.get('main','MONGO_STORAGE_SERVER_PASSWORD').replace("\"", "")),
         "mongo_str_authdb": config_parser.get('main','MONGO_STORAGE_SERVER_AUTH').replace("\"", ""),
         "mongo_str_db": config_parser.get('main','MONGO_STORAGE_SERVER_DB').replace("\"", ""),
         "mongo_str_col": config_parser.get('main','MONGO_STORAGE_SERVER_COLLECTION').replace("\"", ""),
         "mongo_str_mod": config_parser.get('main','STORAGE').replace("\"", ""),
         # conf cache
         "mongo_cache_server": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_HOST').replace("\"", ""),
-        "mongo_cache_user": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_USER').replace("\"", ""),
-        "mongo_cache_pass": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_PASSWORD').replace("\"", ""),
+        "mongo_cache_user": urllib.quote_plus(config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_USER').replace("\"", "")),
+        "mongo_cache_pass": urllib.quote_plus(config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_PASSWORD').replace("\"", "")),
         "mongo_cache_authdb": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_AUTH').replace("\"", ""),
         "mongo_cache_db": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_DB').replace("\"", ""),
         "mongo_cache_col": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_COLLECTION').replace("\"", ""),
@@ -130,16 +131,16 @@ def read_parameters(comp):
         "ttl_cache": config_parser.get('main','RESULT_STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
         # conf storage
         "mongo_str_server": config_parser.get('main','MONGO_STORAGE_SERVER_HOST').replace("\"", ""),
-        "mongo_str_user": config_parser.get('main','MONGO_STORAGE_SERVER_USER').replace("\"", ""),
-        "mongo_str_pass": config_parser.get('main','MONGO_STORAGE_SERVER_PASSWORD').replace("\"", ""),
+        "mongo_str_user": urllib.quote_plus(config_parser.get('main','MONGO_STORAGE_SERVER_USER').replace("\"", "")),
+        "mongo_str_pass": urllib.quote_plus(config_parser.get('main','MONGO_STORAGE_SERVER_PASSWORD').replace("\"", "")),
         "mongo_str_authdb": config_parser.get('main','MONGO_STORAGE_SERVER_AUTH').replace("\"", ""),
         "mongo_str_db": config_parser.get('main','MONGO_STORAGE_SERVER_DB').replace("\"", ""),
         "mongo_str_col": config_parser.get('main','MONGO_STORAGE_SERVER_COLLECTION').replace("\"", ""),
         "mongo_str_mod": config_parser.get('main','STORAGE').replace("\"", ""),
         # conf cache
         "mongo_cache_server": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_HOST').replace("\"", ""),
-        "mongo_cache_user": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_USER').replace("\"", ""),
-        "mongo_cache_pass": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_PASSWORD').replace("\"", ""),
+        "mongo_cache_user": urllib.quote_plus(config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_USER').replace("\"", "")),
+        "mongo_cache_pass": urllib.quote_plus(config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_PASSWORD').replace("\"", "")),
         "mongo_cache_authdb": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_AUTH').replace("\"", ""),
         "mongo_cache_db": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_DB').replace("\"", ""),
         "mongo_cache_col": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_COLLECTION').replace("\"", ""),
@@ -154,8 +155,8 @@ def read_parameters(comp):
         "ttl_cache": config_parser.get('main','RESULT_STORAGE_EXPIRATION_SECONDS').replace("\"", ""),
         # conf cache
         "mongo_cache_server": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_HOST').replace("\"", ""),
-        "mongo_cache_user": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_USER').replace("\"", ""),
-        "mongo_cache_pass": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_PASSWORD').replace("\"", ""),
+        "mongo_cache_user": urllib.quote_plus(config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_USER').replace("\"", "")),
+        "mongo_cache_pass": urllib.quote_plus(config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_PASSWORD').replace("\"", "")),
         "mongo_cache_authdb": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_AUTH').replace("\"", ""),
         "mongo_cache_db": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_DB').replace("\"", ""),
         "mongo_cache_col": config_parser.get('main','MONGO_RESULT_STORAGE_SERVER_COLLECTION').replace("\"", ""),
